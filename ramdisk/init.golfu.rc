@@ -139,6 +139,7 @@ on boot
     write /proc/sys/net/ipv6/conf/rmnet_sdio6/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet_sdio7/accept_ra 2
 
+<<<<<<< HEAD:ramdisk/init.golfu.rc
     # Widevine DRM
     chown drm system /dev/htcdrm
     chmod 0660 /dev/htcdrm
@@ -150,11 +151,6 @@ on boot
     setprop ro.ril.fast.dormancy.rule 1
     setprop ro.ril.fd.scron.timeout 4
     setprop ro.ril.fd.scroff.timeout 3
-    
-    # Configure and enable KSM
-    write /sys/kernel/mm/ksm/pages_to_scan 100
-    write /sys/kernel/mm/ksm/sleep_millisecs 500
-    write /sys/kernel/mm/ksm/run 1
     
     # zRAM
     write /proc/sys/vm/page-cluster 0
