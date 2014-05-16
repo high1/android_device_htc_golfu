@@ -134,6 +134,12 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/libmmparser_divxdrmlib.so:system/lib/libmmparser_divxdrmlib.so \
     device/htc/golfu/proprietary/lib/libdivxdrmdecrypt.so:system/lib/libdivxdrmdecrypt.so
 
+# Set usb type
+ADDITIONAL_DEFAULT_PROPERTIES += \
+    persist.sys.usb.config=mass_storage,adb \
+    persist.service.adb.enable=1 \
+    ro.adb.secure=0
+
 # Publish that we support the live wallpaper feature.
 PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:/system/etc/permissions/android.software.live_wallpaper.xml
@@ -260,16 +266,23 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem 
     
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.com.google.locationfeatures=1 \
-    ro.com.google.networklocation=1 \
-    ro.com.google.gmsversion=4.0_r2 \
-    dalvik.vm.lockprof.threshold=500 \
+    PRODUCT_PROPERTY_OVERRIDES += \
     ro.setupwizard.enable_bypass=1 \
     ro.telephony.call_ring.multiple=false \
-    persist.sys.use_dithering=1 \
+    ro.vold.umsdirtyratio=50 \
+    persist.sys.purgeable_assets=1 \
+    ro.telephony.call_ring.delay=3000 \
+    ro.config.low_ram=true \
+    dalvik.vm.dexopt-flags=v=a,o=v,m=y,u=y \
+    dalvik.vm.heapstartsize=5m \
+    dalvik.vm.heapgrowthlimit=48m \
+    dalvik.vm.heapsize=64m \
+    dalvik.vm.heaptargetutilization=0.25 \
+    dalvik.vm.heapminfree=512k \
+    dalvik.vm.heapmaxfree=2m
     persist.sys.usb.config=mass_storage,adb \
-    ro.vold.umsdirtyratio=20
-
+    
 PRODUCT_AAPT_CONFIG := normal mdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
+PRODUCT_TAGS += dalvik.gc.type-precise
