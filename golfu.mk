@@ -144,10 +144,6 @@ PRODUCT_PACKAGES += \
     VisualizationWallpapers \
     librs_jni
 
-# Releasetools
-PRODUCT_COPY_FILES += \
-     device/htc/golfu/releasetools/extras.sh:system/bin/extras.sh
-
 # Vold
 PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/vold.fstab:system/etc/vold.fstab
