@@ -1,0 +1,86 @@
+diff --git a/Ext4.cpp b/Ext4.cpp
+index 7981f7e..3332e10 100644
+--- a/Ext4.cpp
++++ b/Ext4.cpp
+@@ -47,14 +47,10 @@ static char MKEXT4FS_PATH[] = HELPER_PATH "make_ext4fs";
+ static char MKE2FS_PATH[] = HELPER_PATH "mke2fs";
+ 
+ int Ext4::doMount(const char *fsPath, const char *mountPoint, bool ro, bool remount,
+-        bool executable, bool sdcard, const char *mountOpts) {
++        bool executable, bool sdcard) {
+     int rc;
+     unsigned long flags;
+-    char data[1024];
+-
+-    data[0] = '\0';
+-    if (mountOpts)
+-        strlcat(data, mountOpts, sizeof(data));
++    const char *data = NULL;
+ 
+     flags = MS_NOATIME | MS_NODEV | MS_NOSUID | MS_DIRSYNC;
+ 
+@@ -64,9 +60,7 @@ int Ext4::doMount(const char *fsPath, const char *mountPoint, bool ro, bool remo
+ 
+     if (sdcard) {
+         // Mount external volumes with forced context
+-        if (data[0])
+-            strlcat(data, ",", sizeof(data));
+-        strlcat(data, "context=u:object_r:sdcard_external:s0", sizeof(data));
++        data = "context=u:object_r:sdcard_external:s0";
+     }
+ 
+     rc = mount(fsPath, mountPoint, "ext4", flags, data);
+diff --git a/Ext4.h b/Ext4.h
+index 0ccedd3..50ac0e9 100644
+--- a/Ext4.h
++++ b/Ext4.h
+@@ -22,7 +22,7 @@
+ class Ext4 {
+ public:
+     static int doMount(const char *fsPath, const char *mountPoint, bool ro, bool remount,
+-            bool executable, bool sdcard, const char *mountOpts = NULL);
++            bool executable, bool sdcard);
+     static int check(const char *fsPath);
+     static int format(const char *fsPath, const char *mountpoint);
+ };
+diff --git a/Volume.cpp b/Volume.cpp
+index 16bbb90..9bea78f 100644
+--- a/Volume.cpp
++++ b/Volume.cpp
+@@ -123,7 +123,6 @@ Volume::Volume(VolumeManager *vm, const fstab_rec* rec, int flags) {
+     mUserLabel = NULL;
+     mState = Volume::State_Init;
+     mFlags = flags;
+-    mOpts = (rec->fs_options ? strdup(rec->fs_options) : NULL);
+     mCurrentlyMountedKdev = -1;
+     mPartIdx = rec->partnum;
+     mRetryMount = false;
+@@ -134,7 +133,6 @@ Volume::~Volume() {
+     free(mLabel);
+     free(mUuid);
+     free(mUserLabel);
+-    free(mOpts);
+ }
+ 
+ void Volume::setDebug(bool enable) {
+@@ -514,7 +512,7 @@ int Volume::mountVol() {
+                     return -1;
+                 }
+ 
+-                if (Ext4::doMount(devicePath, getMountpoint(), false, false, false, true, mOpts)) {
++                if (Ext4::doMount(devicePath, getMountpoint(), false, false, false, true)) {
+                     SLOGE("%s failed to mount via EXT4 (%s)\n", devicePath, strerror(errno));
+                     continue;
+                 }
+diff --git a/Volume.h b/Volume.h
+index c1be400..1f0bc85 100644
+--- a/Volume.h
++++ b/Volume.h
+@@ -28,7 +28,6 @@ class Volume {
+ private:
+     int mState;
+     int mFlags;
+-    char* mOpts;
+ 
+ public:
+ #endif

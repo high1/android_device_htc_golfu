@@ -1,0 +1,27 @@
+diff --git a/envsetup.sh b/envsetup.sh
+index a5cc21c..a9ba39b 100644
+--- a/envsetup.sh
++++ b/envsetup.sh
+@@ -153,7 +153,7 @@ function setpaths()
+     case $ARCH in
+         x86) toolchaindir=x86/i686-linux-android-$targetgccversion/bin
+             ;;
+-        arm) toolchaindir=arm/arm-linux-androideabi-$targetgccversion/bin
++        arm) toolchaindir=arm/linaro-4.8/bin
+             ;;
+         mips) toolchaindir=mips/mipsel-linux-android-$targetgccversion/bin
+             ;;
+diff --git a/target/product/full_base.mk b/target/product/full_base.mk
+index 7e5d450..cd6e00b 100644
+--- a/target/product/full_base.mk
++++ b/target/product/full_base.mk
+@@ -30,9 +30,6 @@ PRODUCT_PROPERTY_OVERRIDES := \
+ # Put en_US first in the list, so make it default.
+ PRODUCT_LOCALES := en_US
+ 
+-# Include drawables for all densities
+-PRODUCT_AAPT_CONFIG := normal hdpi xhdpi xxhdpi
+-
+ # Get some sounds
+ $(call inherit-product-if-exists, frameworks/base/data/sounds/AllAudio.mk)
+ 

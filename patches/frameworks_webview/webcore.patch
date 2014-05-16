@@ -1,0 +1,13 @@
+diff --git a/Android.mk b/Android.mk
+index 2effc4e..2258968 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -22,7 +22,7 @@ include $(CLEAR_VARS)
+ 
+ LOCAL_MODULE := webview
+ LOCAL_MODULE_TAGS := optional
+-LOCAL_REQUIRED_MODULES := webviewchromium
++LOCAL_REQUIRED_MODULES := libwebcore
+ 
+ include $(BUILD_PHONY_PACKAGE)
+ 

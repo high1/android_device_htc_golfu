@@ -1,0 +1,29 @@
+diff --git a/mm-video/vidc/vdec/Android.mk b/mm-video/vidc/vdec/Android.mk
+index da25fe4..5ad3204 100755
+--- a/mm-video/vidc/vdec/Android.mk
++++ b/mm-video/vidc/vdec/Android.mk
+@@ -48,10 +48,6 @@ endif
+ 
+ libOmxVdec-def += -D_ANDROID_ICS_
+ 
+-ifeq ($(TARGET_USES_ION),true)
+-libOmxVdec-def += -DUSE_ION
+-endif
+-
+ # ---------------------------------------------------------------------------------
+ # 			Make the Shared library (libOmxVdec)
+ # ---------------------------------------------------------------------------------
+diff --git a/mm-video/vidc/venc/Android.mk b/mm-video/vidc/venc/Android.mk
+index f073feb..0441e64 100644
+--- a/mm-video/vidc/venc/Android.mk
++++ b/mm-video/vidc/venc/Android.mk
+@@ -42,9 +42,6 @@ endif
+ ifeq ($(TARGET_BOARD_PLATFORM),msm7x30)
+ libmm-venc-def += -DMAX_RES_720P
+ endif
+-ifeq ($(TARGET_USES_ION),true)
+-libmm-venc-def += -DUSE_ION
+-endif
+ libmm-venc-def += -D_ANDROID_ICS_
+ # ---------------------------------------------------------------------------------
+ # 			Make the Shared library (libOmxVenc)

@@ -11,7 +11,7 @@ for i in $(find "$PATCHBASE"/* -type d); do
 		PATCHTARGET=$(echo $PATCHTARGET | sed 's/_/\//')
 		if [ -d "$CMBASE/$PATCHTARGET" ]; then break; fi
 	done
-	echo applying $PATCHNAME to $PATCHTARGET
+	echo "\nResetting $PATCHTARGET" || exit 1
 	cd "$CMBASE/$PATCHTARGET" || exit 1
-	git apply --3way "$PATCHBASE/$PATCHNAME"/* || exit 1
+	git reset --hard || exit 1
 done

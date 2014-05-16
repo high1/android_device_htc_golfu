@@ -1,0 +1,31 @@
+diff --git a/core/jni/android_hardware_Camera.cpp b/core/jni/android_hardware_Camera.cpp
+index 17967e0..fe7f0af 100644
+--- a/core/jni/android_hardware_Camera.cpp
++++ b/core/jni/android_hardware_Camera.cpp
+@@ -394,11 +394,13 @@ static void android_hardware_Camera_setLongshot(JNIEnv *env, jobject thiz, jbool
+     sp<Camera> camera = get_native_camera(env, thiz, &context);
+     if (camera == 0) return;
+ 
++#if 0
+     if ( enable ) {
+         rc = camera->sendCommand(CAMERA_CMD_LONGSHOT_ON, 0, 0);
+     } else {
+         rc = camera->sendCommand(CAMERA_CMD_LONGSHOT_OFF, 0, 0);
+     }
++#endif
+ 
+     if (rc != NO_ERROR) {
+        jniThrowException(env, "java/lang/RuntimeException", "enabling longshot mode failed");
+@@ -715,10 +717,12 @@ static void android_hardware_Camera_setMetadataCb(JNIEnv *env, jobject thiz, jbo
+     sp<Camera> camera = get_native_camera(env, thiz, &context);
+     if (camera == 0) return;
+ 
++#if 0
+     if(mode == true)
+         rc = camera->sendCommand(CAMERA_CMD_METADATA_ON, 0, 0);
+     else
+         rc = camera->sendCommand(CAMERA_CMD_METADATA_OFF, 0, 0);
++#endif
+ 
+     if (rc != NO_ERROR) {
+         jniThrowException(env, "java/lang/RuntimeException", "set metadata mode failed");
