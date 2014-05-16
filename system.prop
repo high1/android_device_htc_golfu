@@ -53,6 +53,22 @@ persist.rild.nitz_short_ons_2=
 persist.rild.nitz_short_ons_3=
 DEVICE_PROVISIONED=1
 
+# For PDP overlap problem
+ro.ril.avoid.pdp.overlap = 1
+
+#For NITZ power saving mode
+ro.ril.enable.nitz = 3
+
+# For the agps default value
+ro.ril.def.agps.mode = 2
+
+# For HSDPA low throughput
+ro.ril.disable.power.collapse = 1
+
+# Modify MTU from 1500 to 1472 on 3G network
+ro.ril.set.mtusize = 1472
+ro.ril.set.mtu1472 = 1
+
 # Time between scans in seconds. Keep it high to minimize battery drain.
 # This only affects the case in which there are remembered access points,
 # but none are in range.
@@ -113,18 +129,36 @@ debug.hwui.render_dirty_regions=false
 debug.sf.hw=1
 ro.media.enc.jpeg.quality=100
 ro.staticwallpaper.pixelformat=RGB_565
+debug.fb.rgb565=0
 debug.hwc.dynThreshold=1.9
+ro.zygote.disable_gl_preload=true
+debug.egl.recordable.rgba8888=1
+debug.gralloc.map_fb_memory=1
+
+# Video Acceleration
+video.accelerate.hw=1
+debug.performance.tuning=1
+
+# Low Power Audio
+lpa.decode=false
+audio.decoder_override_check=true
+use.non-omx.mp3.decoder=false
+use.non-omx.aac.decoder=false
 
 # Dalvik
-dalvik.vm.heapsize=48m
+dalvik.vm.heapsize=64m
 ro.zram.default=0
-ro.sys.fw.bg_apps_limit=7
+ro.sys.fw.bg_apps_limit=4
+sys.mem.max_hidden_apps=7
 dalvik.vm.checkjni=0
+dalvik.vm.checkjni=false
 dalvik.vm.dexopt-data-only=1
 dalvik.vm.dexopt-flags=v=a,o=v,m=y,u=y
 dalvik.vm.execution-mode=int:jit
 dalvik.vm.verify-bytecode=false
 dalvik.vm.lockprof.threshold=500
+dalvik.vm.heaptargetutilization=0.25
+dalvik.vm.debug.alloc=0
 
 # Misc
 ro.use_data_netmgrd=true
@@ -134,6 +168,10 @@ ro.config.sync=yes
 ro.phone_storage=0
 ro.kernel.android.checkjni=0
 ro.android.secure=0
+ro.fuse_sdcard=true
+persist.sys.strictmode.visual=0
+persist.sys.strictmode.disable=1
+persist.webview.provider=classic
 
 # RIL
 rild.libpath=/system/lib/libbrcm_ril.so
@@ -146,3 +184,4 @@ DEVICE_PROVISIONED=1
 ro.telephony.call_ring.delay=0
 ro.ril.disable.power.collapse=0
 DEVICE_PROVISIONED=1
+
