@@ -167,7 +167,6 @@ httplive.enable.discontinuity=true
 ro.config.sync=yes
 ro.phone_storage=0
 ro.kernel.android.checkjni=0
-ro.android.secure=0
 ro.fuse_sdcard=true
 persist.sys.strictmode.visual=0
 persist.sys.strictmode.disable=1
