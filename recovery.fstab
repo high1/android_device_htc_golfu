@@ -8,5 +8,5 @@
 /dev/block/mmcblk0p21         /recovery  emmc         defaults                                defaults
 /dev/block/mmcblk0p25         /system    ext4      ro,barrier=1                            wait,check
 /dev/block/mmcblk0p29         /devlog    ext4         defaults                                defaults
-/dev/block/mmcblk1p1	/dev/block/mmcblk1          /sdcard    vfat        defaults                                voldmanaged=sdcard:auto,check
+/dev/block/mmcblk1p1          /sdcard    vfat        defaults                                voldmanaged=sdcard:auto,check
 /dev/block/mmcblk0p32         /internal_sdcard	vfat defaults                                voldmanaged=sdcard:auto,check
