@@ -85,7 +85,6 @@ BOARD_SDCARD_INTERNAL_DEVICE := /dev/block/mmcblk0p32
 # Inline kernel building
 TARGET_KERNEL_SOURCE := kernel/htc/golfu
 TARGET_KERNEL_CONFIG := golfu_defconfig
-TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.4.3
 
 # Prebuilt kernel
 #TARGET_PREBUILT_KERNEL := prebuiltkernel/kernel
