@@ -93,15 +93,9 @@ PRODUCT_COPY_FILES += \
 # Init
 PRODUCT_COPY_FILES += \
     device/htc/golfu/fstab.golfu:root/fstab.golfu \
-    device/htc/golfu/prebuilt/root/init:root/init \
-    device/htc/golfu/prebuilt/root/init.rc:root/init.rc \
     device/htc/golfu/prebuilt/root/init.golfu.rc:root/init.golfu.rc \
     device/htc/golfu/prebuilt/root/init.usb.rc:root/init.usb.rc \
     device/htc/golfu/prebuilt/root/ueventd.golfu.rc:root/ueventd.golfu.rc \
-    device/htc/golfu/prebuilt/root/ueventd.rc:root/ueventd.rc \
-    device/htc/golfu/prebuilt/root/init.cm.rc:root/init.cm.rc \
-    device/htc/golfu/prebuilt/root/init.trace.rc:root/init.trace.rc \
-    device/htc/golfu/prebuilt/root/logo.rle:root/logo.rle
 
 # Camera
 PRODUCT_COPY_FILES += \
