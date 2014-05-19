@@ -92,7 +92,7 @@ PRODUCT_COPY_FILES += \
 
 # Init
 PRODUCT_COPY_FILES += \
-    device/htc/golfu/fstab.golfu:root/fstab.golfu \
+    device/htc/golfu/prebuilt/root/fstab.golfu:root/fstab.golfu \
     device/htc/golfu/prebuilt/root/init.golfu.rc:root/init.golfu.rc \
     device/htc/golfu/prebuilt/root/init.usb.rc:root/init.usb.rc \
     device/htc/golfu/prebuilt/root/ueventd.golfu.rc:root/ueventd.golfu.rc \
