@@ -70,4 +70,5 @@ persist.service.adb.enable=1
 # Misc
 ro.config.sync=yes
 ro.phone_storage=0
-
+pm.sleep_mode=1
+power.saving.mode=1
