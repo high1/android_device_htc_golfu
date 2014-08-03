@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="thumbnail_width">240dp</dimen>
-
-    <dimen name="thumbnail_height">240dp</dimen>
-
     <!-- Size of clock font in LockScreen on Unsecure unlock screen.
     <dimen name="keyguard_lockscreen_clock_font_size">40dip</dimen> -->
 
