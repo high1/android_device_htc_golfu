@@ -1,31 +1,39 @@
-on emmc
-
-    mkdir /system
-    mkdir /data 0771 system system
-    mkdir /cache 0770 system cache
-    mkdir /devlog 0700 root root
-    devwait emmc@system
-    mount ext4 emmc@system /system ro barrier=1
-    devwait emmc@userdata
-    mount ext4 emmc@userdata /data nosuid nodev barrier=1 noauto_da_alloc
-    mount ext4 emmc@cache /cache nosuid nodev barrier=1
-    mount ext4 emmc@devlog /devlog nosuid nodev barrier=1
+import init.golfu.usb.rc
 
 on early-init
-    mkdir /storage 0775 system sdcard_r
-    mkdir /storage/sdcard0 0000 system system
+    mount debugfs debugfs /sys/kernel/debug
 
+on init
+    mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
+    #mkdir /storage 0775 system sdcard_r
+    mkdir /storage/sdcard0 0000 system system
+    export EXTERNAL_STORAGE /storage/sdcard0
     # for backwards compatibility
     symlink /storage/sdcard0 /sdcard
     symlink /storage/sdcard0 /mnt/sdcard
 
-    export EXTERNAL_STORAGE /storage/sdcard0
-    device mtd@misc 0460 radio diag
+on fs
+    # mount mmc partitions
+    mount_all /fstab.golfu
+    start adbd
+    
+on post-fs-data
+    mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
+    
+    # Create the directories used by the Wireless subsystem
+    mkdir /data/misc/wifi 0770 wifi wifi
+    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    mkdir /data/misc/wifi/wpa_supplicant 0770 wifi wifi
+    mkdir /data/misc/wifi/hostapd 0770 wifi wifi
 
-on init
-    chown root root /devlog
-    chmod 0700 /devlog
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
+    chown dhcp dhcp /data/misc/dhcp
 
+    #insmod /system/lib/modules/compat.ko
+    insmod /system/lib/modules/cfg80211.ko
+    chmod 0664 /sys/devices/platform/msm_sdcc.2/polling
+    chown system system /sys/devices/platform/msm_sdcc.2/polling
+    
     # [3LM] Secure container used for sharing libraries for encrypted apps
     chmod 0771 /data/secure
     mkdir /data/secure/data 0771 system system
@@ -39,11 +47,11 @@ on init
     chmod 0640 /dev/akm8975_aot
     chmod 0640 /dev/akm8975_daemon
     chmod 0640 /dev/bma150
-
+    
 on boot
-# unmap left alt to avoid console switch
+    # unmap left alt to avoid console switch
     setkey 0x0 0x38 0x0
-# device reset SEND+MENU+END
+    # device reset SEND+MENU+END
     setkey 0x0 0xe7 0x706
     setkey 0x0 0x8b 0x707
 
@@ -57,42 +65,15 @@ on boot
     setkey 0xc0 0x8b 0x707
     setkey 0xc0 0x6b 0x20c
 
-# HTC SSD Audio
+    # HTC SSD Audio
     mkdir /data/audio
     chown media audio /data/audio
     chmod 755 /data/audio
 
-#NFC
+    #NFC
     setprop ro.nfc.port "I2C"
     chmod 0660 /dev/pn544
     chown nfc nfc /dev/pn544
-
-# HTC_WIFI_START
-    mkdir /data/system/wpa_supplicant 0771 wifi wifi
-    mkdir /data/misc/wifi 0771 wifi wifi
-    mkdir /data/misc/wifi/wpa_supplicant 0770 wifi wifi
-    mkdir /data/misc/wifi/hostap 0770 wifi wifi
-    mkdir /data/misc/wifi/sockets 0771 wifi wifi
-    chmod 0771 /data/system/wpa_supplicant
-    chmod 0771 /data/misc/wifi
-    chmod 0660 /data/misc/wifi/wpa_supplicant.conf
-    chmod 0771 /data/misc/wifi/sockets
-    chown wifi wifi /data/system/wpa_supplicant
-    chown wifi wifi /data/misc/wifi/wpa_supplicant.conf
-    chown wifi wifi /data/misc/wifi/sockets
-    chown wifi wifi /data/misc/wifi
-
-    mkdir /data/misc/wifi/hostapd 0777 wifi wifi
-
-    mkdir /data/misc/dhcp 0777 dhcp dhcp
-    chmod 0777 /data/misc/dhcp
-    chown dhcp dhcp /data/misc/dhcp
-
-    insmod /system/lib/modules/compat.ko
-    insmod /system/lib/modules/cfg80211.ko
-    chown system system /sys/devices/platform/msm_sdcc.2/polling
-
-# HTC_WIFI_END
 
     # bluetooth power up/down interface
     mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
@@ -127,27 +108,21 @@ on boot
     chown system system /sys/class/leds/lcd-backlight/auto
     chown radio radio /sys/module/pm/parameters/idle_sleep_mode
 
-	# for Flip to speaker
-	chown radio radio /sys/class/htc_accelerometer/accelerometer/PhoneOnOffFlag
-	chown radio radio /sys/class/htc_ecompass/ecompass/PhoneOnOffFlag
+    # for Flip to speaker
+    chown radio radio /sys/class/htc_accelerometer/accelerometer/PhoneOnOffFlag
+    chown radio radio /sys/class/htc_ecompass/ecompass/PhoneOnOffFlag
 
-	# for Optical sensors
-	chown system system /sys/class/optical_sensors/lightsensor/ls_adc
-	chown system system /sys/class/optical_sensors/lightsensor/ls_auto
-	chown system system /sys/class/optical_sensors/lightsensor/ls_kadc
-	chown system radio /sys/class/optical_sensors/proximity/ps_adc
-	chown system system /sys/class/optical_sensors/proximity/ps_kadc
-	chown system system /sys/class/optical_sensors/proximity/ps_led
-	chown system system /sys/class/optical_sensors/proximity/ps_test_mode
+    # for Optical sensors
+    chown system system /sys/class/optical_sensors/lightsensor/ls_adc
+    chown system system /sys/class/optical_sensors/lightsensor/ls_auto
+    chown system system /sys/class/optical_sensors/lightsensor/ls_kadc
+    chown system radio /sys/class/optical_sensors/proximity/ps_adc
+    chown system system /sys/class/optical_sensors/proximity/ps_kadc
+    chown system system /sys/class/optical_sensors/proximity/ps_led
+    chown system system /sys/class/optical_sensors/proximity/ps_test_mode
 
     # Load kineto_gan.ko while booting
     insmod /system/lib/modules/kineto_gan.ko
-
-    # for fonts move to data partition
-    mount yaffs2 mtd@system /system rw remount
-    chmod 0755 /data/fonts
-    symlink /data/fonts /system/fonts
-    mount yaffs2 mtd@system /system ro remount
 
 # wifi ++
 

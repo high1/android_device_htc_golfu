@@ -94,7 +94,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/htc/golfu/prebuilt/root/fstab.golfu:root/fstab.golfu \
     device/htc/golfu/prebuilt/root/init.golfu.rc:root/init.golfu.rc \
-    device/htc/golfu/prebuilt/root/init.usb.rc:root/init.usb.rc \
+    device/htc/golfu/prebuilt/root/init.golfu.usb.rc:root/init.golfu.usb.rc \
     device/htc/golfu/prebuilt/root/ueventd.golfu.rc:root/ueventd.golfu.rc \
 
 # Camera
@@ -233,8 +233,8 @@ PRODUCT_COPY_FILES += \
 # Prebuilt Modules
 PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/modules/ath6kl_sdio.ko:system/lib/modules/ath6kl_sdio.ko \
-    device/htc/golfu/proprietary/lib/modules/cfg80211.ko:system/lib/modules/cfg80211.ko \
-    device/htc/golfu/proprietary/lib/modules/compat.ko:system/lib/modules/compat.ko
+    device/htc/golfu/proprietary/lib/modules/cfg80211.ko:system/lib/modules/cfg80211.ko
+#    device/htc/golfu/proprietary/lib/modules/compat.ko:system/lib/modules/compat.ko
 #    device/htc/golfu/proprietary/lib/modules/kineto_gan.ko:system/lib/modules/kineto_gan.ko
 
 # Proprietary Binaries
@@ -258,9 +258,8 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/bin/ath6kl-fwlog-record:system/bin/ath6kl-fwlog-record \
     device/htc/golfu/proprietary/bin/athtestcmd:system/bin/athtestcmd \
     device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem 
-    
+
 PRODUCT_PROPERTY_OVERRIDES += \
-    PRODUCT_PROPERTY_OVERRIDES += \
     ro.setupwizard.enable_bypass=1 \
     ro.telephony.call_ring.multiple=false \
     ro.vold.umsdirtyratio=50 \
@@ -273,7 +272,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.heapsize=64m \
     dalvik.vm.heaptargetutilization=0.25 \
     dalvik.vm.heapminfree=512k \
-    dalvik.vm.heapmaxfree=2m
+    dalvik.vm.heapmaxfree=2m \
     persist.sys.usb.config=mass_storage,adb \
     
 PRODUCT_AAPT_CONFIG := normal mdpi
