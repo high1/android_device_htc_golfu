@@ -289,15 +289,6 @@ service zchgd_onmode /system/bin/zchgd -onmode
     group root graphics
     oneshot
 
-service ril-daemon1 /system/bin/rild -c 1
-    class late_start
-    socket rild1 stream 660 root radio
-    socket rild-debug1 stream 660 radio system
-    user root
-    disabled
-    group radio cache inet misc audio qcom_oncrpc diag system
-#-SSD_RIL: from QCT Fusion
-
 on property:service.modem.enable=1
     start modem
 
