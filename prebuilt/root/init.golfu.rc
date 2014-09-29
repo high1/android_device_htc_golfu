@@ -325,3 +325,7 @@ service zimmer /system/bin/zimmer on /dev/block/mmcblk0p27
 service zcb /system/bin/logwrapper /system/bin/zcb service
     user root
     group root
+    
+service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
+    class late_start
+    disabled
