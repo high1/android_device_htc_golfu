@@ -15,7 +15,7 @@
 -->
 <resources>
     <!-- HTC Camcorder Mode -->
-    <bool name="needsHTCCamMode">true</bool>
+    <bool name="needsHTCCamMode">false</bool>
 
     <!-- Disable face detection on the rear camera -->
     <bool name="noFaceDetectOnRearCamera">true</bool>
