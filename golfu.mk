@@ -99,7 +99,7 @@ PRODUCT_COPY_FILES += \
 
 # Camera
 PRODUCT_COPY_FILES += \
-    device/htc/golfu/proprietary/lib/hw/camera.default.so:system/lib/hw/camera.default.so \
+    device/htc/golfu/proprietary/lib/hw/vendor-camera.default.so:system/lib/hw/vendor-camera.default.so \
     device/htc/golfu/proprietary/lib/liboemcamera.so:system/lib/liboemcamera.so \
     device/htc/golfu/proprietary/lib/libmmipl.so:system/lib/libmmipl.so \
     device/htc/golfu/proprietary/lib/libmmjpeg.so:system/lib/libmmjpeg.so \
@@ -137,12 +137,6 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
 # Publish that we support the live wallpaper feature.
 PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:/system/etc/permissions/android.software.live_wallpaper.xml
-
-PRODUCT_PACKAGES += \
-    LiveWallpapers \
-    LiveWallpapersPicker \
-    VisualizationWallpapers \
-    librs_jni
 
 # Vold
 PRODUCT_COPY_FILES += \
@@ -249,15 +243,15 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/bin/hci_qcomm_init:system/bin/hci_qcomm_init \
     device/htc/golfu/proprietary/bin/hciattach:system/bin/hciattach \
     device/htc/golfu/proprietary/bin/netsharing:system/bin/netsharing \
-    device/htc/golfu/proprietary/bin/rild:system/bin/rild \
     device/htc/golfu/proprietary/bin/rmt_storage:system/bin/rmt_storage \
-    device/htc/golfu/proprietary/bin/sdptool:system/bin/sdptool \
     device/htc/golfu/proprietary/bin/zcb:system/bin/zcb \
     device/htc/golfu/proprietary/bin/zchgd:system/bin/zchgd \
     device/htc/golfu/proprietary/bin/zimmer:system/bin/zimmer \
     device/htc/golfu/proprietary/bin/ath6kl-fwlog-record:system/bin/ath6kl-fwlog-record \
     device/htc/golfu/proprietary/bin/athtestcmd:system/bin/athtestcmd \
     device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem 
+#    device/htc/golfu/proprietary/bin/rild:system/bin/rild \
+#    device/htc/golfu/proprietary/bin/sdptool:system/bin/sdptool \
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.setupwizard.enable_bypass=1 \

@@ -39,9 +39,9 @@ TARGET_CPU_VARIANT := cortex-a5
 ARCH_ARM_HAVE_TLS_REGISTER := true
 
 # Compiler Optimization
-ARCH_ARM_HIGH_OPTIMIZATION := true
-ARCH_ARM_HIGH_OPTIMIZATION_COMPAT := true
-TARGET_USE_O3 := true
+#ARCH_ARM_HIGH_OPTIMIZATION := true
+#ARCH_ARM_HIGH_OPTIMIZATION_COMPAT := true
+#TARGET_USE_O3 := true
 
 # cortex-a9 is used to take advantage of NEON optimizations
 TARGET_ARCH_VARIANT_CPU := cortex-a5
@@ -156,7 +156,7 @@ BOARD_USES_LEGACY_RIL := true
 BOARD_NEEDS_MEMORYHEAPPMEM := true
 CAMERA_USES_SURFACEFLINGER_CLIENT_STUB := true
 BOARD_USES_QCOM_LEGACY_CAM_PARAMS := true
-COMMON_GLOBAL_CFLAGS += -DICS_CAMERA_BLOB
+COMMON_GLOBAL_CFLAGS += -DICS_CAMERA_BLOB -DNEEDS_VECTORIMPL_SYMBOLS 
 
 # Add h/w acceleration in browser
 #ENABLE_WEBGL := true
@@ -182,11 +182,12 @@ TARGET_PROVIDES_LIBLIGHT := true
 TARGET_PROVIDES_POWERHAL := true
 
 # Recovery
-TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_RECOVERY_FSTAB := device/htc/golfu/prebuilt/root/golfu.fstab
 BOARD_HAS_NO_SELECT_BUTTON := true
-TARGET_RECOVERY_FSTAB := device/htc/golfu/recovery.fstab
-BOARD_USE_USB_MASS_STORAGE_SWITCH := true
-BOARD_UMS_LUNFILE := "/sys/devices/platform/msm_otg/msm_hsusb/gadget/lun0/file"
+BOARD_UMS_LUNFILE :="sys/class/android_usb/f_mass_storage/lun/file"
+#BOARD_UMS_LUNFILE := "/sys/devices/platform/msm_otg/msm_hsusb/gadget/lun0/file"
+TARGET_USERIMAGES_USE_EXT4 := true
+#BOARD_USE_USB_MASS_STORAGE_SWITCH := true
 
 # TWRP
 DEVICE_RESOLUTION := 320x480
