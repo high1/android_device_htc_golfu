@@ -87,6 +87,7 @@ TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/msm_otg/msm_hsusb/gadg
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
+BOARD_HAVE_BLUETOOTH_QCOM := true
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/htc/golfu/bluetooth
 
 # Wi-Fi
@@ -145,8 +146,6 @@ TARGET_USES_ION := false
 
 # Media
 TARGET_QCOM_MEDIA_VARIANT := legacy
-
-# ICS Stuff
 
 # RIL
 BOARD_USE_NEW_LIBRIL_HTC := true
