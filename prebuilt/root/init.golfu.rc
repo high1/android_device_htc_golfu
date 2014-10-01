@@ -49,6 +49,7 @@ on post-fs-data
     chmod 0640 /dev/bma150
     
 on boot
+/system/bin/logcat > /data/misc/start.log
     # unmap left alt to avoid console switch
     setkey 0x0 0x38 0x0
     # device reset SEND+MENU+END
