@@ -98,7 +98,8 @@ BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_ath6kl
 WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/ath6kl_sdio.ko"
 WIFI_DRIVER_MODULE_NAME := "ath6kl_sdio"
 WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1"
-WIFI_DRIVER_P2P_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 debug_mask=0x2413" WIFI_SDIO_IF_DRIVER_MODULE_PATH := "/system/lib/modules/cfg80211.ko"
+WIFI_DRIVER_P2P_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 debug_mask=0x2413"
+WIFI_SDIO_IF_DRIVER_MODULE_PATH := "/system/lib/modules/cfg80211.ko"
 WIFI_SDIO_IF_DRIVER_MODULE_NAME := "cfg80211"
 WIFI_SDIO_IF_DRIVER_MODULE_ARG := ""
 
