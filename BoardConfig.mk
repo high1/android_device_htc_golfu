@@ -22,7 +22,7 @@ TARGET_NO_RADIOIMAGE := true
 
 TARGET_GLOBAL_CFLAGS   += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
-COMMON_GLOBAL_CFLAGS += -DREFRESH_RATE=60 -DQCOM_NO_SECURE_PLAYBACK -DBINDER_COMPAT
+COMMON_GLOBAL_CFLAGS += -DREFRESH_RATE=60 -DBINDER_COMPAT
 COMMON_GLOBAL_CFLAGS += -DQCOM_ICS_DECODERS -DQCOM_HARDWARE -DNO_UPDATE_PREVIEW
 
 # Arch related defines and optimizations
@@ -47,9 +47,6 @@ ARCH_ARM_HAVE_TLS_REGISTER := true
 TARGET_ARCH_VARIANT_CPU := cortex-a5
 TARGET_ARCH_VARIANT_FPU := neon
 
-# Optimisations used by Qualcomm
-#TARGET_USE_QCOM_BIONIC_OPTIMIZATION := true
-#TARGET_ENABLE_QC_AV_ENHANCEMENTS := true
 # Qualcomm hardware
 BOARD_USES_QCOM_HARDWARE := true
 TARGET_USE_QCOM_BIONIC_OPTIMIZATION := true
@@ -60,8 +57,6 @@ TARGET_KERNEL_CONFIG := golfu_defconfig
 TARGET_BOOTLOADER_BOARD_NAME := golfu
 BOARD_KERNEL_CMDLINE := no_console_suspend=1 console=null
 BOARD_KERNEL_BASE := 0x13000000
-#BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x1200000
-
 TARGET_SPECIFIC_HEADER_PATH := device/htc/golfu/include
 
 # Audio
@@ -81,7 +76,6 @@ BOARD_SDCARD_INTERNAL_DEVICE := /dev/block/mmcblk0p32
 BOARD_VOLD_MAX_PARTITIONS := 32
 BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
 BOARD_VOLD_DISC_HAS_MULTIPLE_MAJORS := true
-TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/msm_otg/msm_hsusb/gadget/lun0/file"
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
@@ -112,7 +106,6 @@ COMMON_GLOBAL_CFLAGS += -DQCOM_NO_SECURE_PLAYBACK
 # GPS
 #BOARD_USES_QCOM_LIBRPC := true
 BOARD_USES_QCOM_GPS := true
-#BOARD_USES_QCOM_HARDWARE := true
 #BOARD_USES_QCOM_LIBS := true
 BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := golfu
 BOARD_VENDOR_QCOM_GPS_LOC_API_AMSS_VERSION := 50000
@@ -183,7 +176,6 @@ TARGET_PROVIDES_POWERHAL := true
 TARGET_RECOVERY_FSTAB := device/htc/golfu/prebuilt/root/golfu.fstab
 BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_UMS_LUNFILE :="sys/class/android_usb/f_mass_storage/lun/file"
-#BOARD_UMS_LUNFILE := "/sys/devices/platform/msm_otg/msm_hsusb/gadget/lun0/file"
 TARGET_USERIMAGES_USE_EXT4 := true
 #BOARD_USE_USB_MASS_STORAGE_SWITCH := true
 
