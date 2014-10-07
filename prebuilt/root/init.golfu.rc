@@ -29,7 +29,7 @@ on post-fs-data
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
 
-    insmod /system/lib/modules/compat.ko
+    #insmod /system/lib/modules/compat.ko
     insmod /system/lib/modules/cfg80211.ko
     chmod 0664 /sys/devices/platform/msm_sdcc.2/polling
     chown system system /sys/devices/platform/msm_sdcc.2/polling
