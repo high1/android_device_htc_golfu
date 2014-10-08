@@ -171,11 +171,13 @@ on boot
 
     # Load kineto_gan.ko while booting
     insmod /system/lib/modules/kineto_gan.ko
+    
+    # Load ath6kl_sdio.ko while booting
+    insmod /system/lib/modules/ath6kl_sdio.ko
 
 # wifi ++
 
 service dhcpcd_wlan0 /system/bin/dhcpcd -ABKLG
-    class late_start
     disabled
     oneshot
 
@@ -195,6 +197,11 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0 -dddd
     class main
     socket wpa_wlan0 dgram 660 wifi wifi
+
+service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
+    user root
+    group wifi inet
+    socket wpa_wlan0 dgram 0660 wifi wifi
     disabled
     oneshot
     
@@ -208,6 +215,12 @@ service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
     socket hostapd_wlan0 dgram 660 root wifi
     user root
     group wifi
+
+service p2p_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
+    user root
+    group wifi inet
+    socket wpa_wlan0 dgram 0660 wifi wifi
+    disabled
     oneshot
     disabled
     
