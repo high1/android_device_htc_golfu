@@ -43,12 +43,6 @@ PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio_policy.msm7x27a \
     audio.primary.msm7x27a
-    #audio.primary.msm7x27a \
-    #audio_policy.msm7x27a \
-    #audio.a2dp.default \
-    #audio_policy.conf \
-    #libaudioutils \
-    #audio.usb.default
 
  # GPS
 PRODUCT_PACKAGES += \
@@ -62,7 +56,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     power.msm7x27a
     
-#HealthD
+#Health HAL
 PRODUCT_PACKAGES += \
     libhealthd.msm7x27a
     
@@ -97,26 +91,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,device/htc/golfu/ramdisk,root)
 
-# Init
-#PRODUCT_COPY_FILES += \
-#    device/htc/golfu/prebuilt/root/fstab.golfu:root/fstab.golfu \
-#    device/htc/golfu/prebuilt/root/init.golfu.rc:root/init.golfu.rc \
-#    device/htc/golfu/prebuilt/root/init.golfu.usb.rc:root/init.golfu.usb.rc \
-#    device/htc/golfu/prebuilt/root/ueventd.golfu.rc:root/ueventd.golfu.rc
-#   device/htc/golfu/prebuilt/root/init.recovery.golfu.rc:root/init.recovery.golfu.rc \
-
 # Recovery
 PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,device/htc/golfu/prebuilt/recovery,recovery/root)
-
-# TWRP Recovery
-#PRODUCT_COPY_FILES += \
-#    device/htc/golfu/recovery/twrp.fstab:recovery/root/etc/twrp.fstab \
-#    device/htc/golfu/recovery/sbin/choice_fn:recovery/root/sbin/choice_fn \
-#    device/htc/golfu/recovery/sbin/detect_key:recovery/root/sbin/detect_key \
-#    device/htc/golfu/recovery/sbin/offmode_charging:recovery/root/sbin/offmode_charging \
-#    device/htc/golfu/recovery/sbin/power_test:recovery/root/sbin/power_test \
-#    device/htc/golfu/recovery/sbin/rmt_storage:recovery/root/sbin/rmt_storage
     
 # Prebuilt
 #PRODUCT_COPY_FILES += \
@@ -176,10 +153,6 @@ PRODUCT_COPY_FILES += \
 #Publish that we support the live wallpaper feature.
 PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:/system/etc/permissions/android.software.live_wallpaper.xml
-
-# Vold
-#PRODUCT_COPY_FILES += \
-#    device/htc/golfu/proprietary/etc/vold.fstab:system/etc/vold.fstab
 
 # DRM Plugin
 PRODUCT_COPY_FILES += \

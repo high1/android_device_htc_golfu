@@ -62,25 +62,24 @@ on post-fs-data
     chmod 0640 /dev/akm8975_daemon
     chmod 0640 /dev/bma150
     
-     setprop vold.post_fs_data_done 1
+    setprop vold.post_fs_data_done 1
      
 on boot
-    /system/bin/logcat > /data/misc/start.log
     # unmap left alt to avoid console switch
-    setkey 0x0 0x38 0x0
+    #setkey 0x0 0x38 0x0
     # device reset SEND+MENU+END
-    setkey 0x0 0xe7 0x706
-    setkey 0x0 0x8b 0x707
+    #setkey 0x0 0xe7 0x706
+    #setkey 0x0 0x8b 0x707
 
-    setkey 0x40 0xe7 0x706
-    setkey 0x40 0x8b 0x707
+    #setkey 0x40 0xe7 0x706
+    #setkey 0x40 0x8b 0x707
 
-    setkey 0x80 0xe7 0x706
-    setkey 0x80 0x8b 0x707
+    #setkey 0x80 0xe7 0x706
+    #setkey 0x80 0x8b 0x707
 
-    setkey 0xc0 0xe7 0x706
-    setkey 0xc0 0x8b 0x707
-    setkey 0xc0 0x6b 0x20c
+    #setkey 0xc0 0xe7 0x706
+    #setkey 0xc0 0x8b 0x707
+    #setkey 0xc0 0x6b 0x20c
 
     # HTC SSD Audio
     mkdir /data/audio
@@ -98,10 +97,14 @@ on boot
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
     chown bluetooth bluetooth /proc/bluetooth/sleep/proto
+    chown bluetooth bluetooth /proc/bcm/sleep/proto
     chown system system /sys/module/sco/parameters/disable_esco
+    chown bluetooth bluetooth /sys/module/hci_smd/parameters/hcismd_set
     chmod 0660 /sys/module/bluetooth_power/parameters/power
+    chmod 0660 /sys/module/hci_smd/parameters/hcismd_set
     chmod 0660 /sys/class/rfkill/rfkill0/state
     chmod 0660 /proc/bluetooth/sleep/proto
+    chmod 0660 /proc/bcm/sleep/proto
     chown bluetooth bluetooth /dev/ttyHS0
     chmod 0660 /dev/ttyHS0
     chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
@@ -175,16 +178,20 @@ on boot
     # Load ath6kl_sdio.ko while booting
     insmod /system/lib/modules/ath6kl_sdio.ko
 
-# wifi ++
-
-service dhcpcd_wlan0 /system/bin/dhcpcd -ABKLG
-    disabled
-    oneshot
-
-service iprenew_wlan0 /system/bin/dhcpcd -n
-    disabled
-    oneshot
+on property:init.svc.wpa_supplicant=stopped
+    stop dhcpcd
     
+service rmt_storage /system/bin/rmt_storage
+    class core
+    user root
+    disabled
+
+on property:ro.boot.emmc=true
+    start rmt_storage
+
+#service netmgrd /system/bin/netmgrd
+#    class late_start
+
 service qmuxd /system/bin/qmuxd
     class core
     user radio
@@ -198,61 +205,58 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     class main
     socket wpa_wlan0 dgram 660 wifi wifi
 
-service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
-    user root
-    group wifi inet
-    socket wpa_wlan0 dgram 0660 wifi wifi
-    disabled
-    oneshot
-    
-#service p2p_supplicant /system/bin/logwrapper /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/data/misc/wifi/p2p_supplicant.conf
-#    group system wifi
-#    disabled
-#    oneshot
-
-service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
-    class late_start
-    socket hostapd_wlan0 dgram 660 root wifi
-    user root
-    group wifi
-
-service p2p_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
-    user root
-    group wifi inet
-    socket wpa_wlan0 dgram 0660 wifi wifi
-    disabled
-    oneshot
-    disabled
-    
-#service netmgrd /system/bin/netmgrd
-#    class late_start
-
-on property:init.svc.wpa_supplicant=stopped
-    stop dhcpcd_wlan0
-
-#service abtfilt /system/bin/abtfilt -d -z -n -q -v -s -w wlan0
-#    class late_start
+#service p2p_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
 #    user root
-#    group bluetooth net_bt_admin inet net_admin net_raw
+#    group wifi inet
+#    socket wpa_wlan0 dgram 0660 wifi wifi
 #    disabled
 #    oneshot
+#    disabled
+
+#service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
+#    class late_start
+#    socket hostapd_wlan0 dgram 660 root wifi
+#    user root
+#    group wifi
+
+service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
+    class late_start
+    disabled
+    oneshot
+
+service dhcpcd_bt-pan /system/bin/dhcpcd -ABKL
+    class main
+    disabled
+    oneshot
+    
+service dhcpcd_p2p /system/bin/dhcpcd -aABKL
+    class main
+    disabled
+    oneshot
+
+service iprenew_wlan0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service iprenew_bt-pan /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+    
+service iprenew_p2p /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service iprelease_wlan0 /system/bin/dhcpcd -k
+    class late_start
+    disabled
+    oneshot
 
 service btmac /system/bin/btmac
      class main
      oneshot
-
-service dhcpcd_bnep0 /system/bin/dhcpcd -BKLG
-    disabled
-    oneshot
-
-# wifi--
-
-service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
-    class late_start
-    user bluetooth
-    group qcom_oncrpc bluetooth net_bt_admin
-    disabled
-    oneshot
 
 # bugreport is triggered by the KEY_VOLUMEUP and KEY_VOLUMEDOWN keycodes
 service bugreport /system/bin/dumpstate -d -v -o /sdcard/bugreports/bugreport
@@ -265,24 +269,6 @@ service udhcpd /system/bin/udhcpd
     disabled
     oneshot
 
-service netsharing_on /system/bin/netsharing net on
-    disabled
-    oneshot
-
-service netsharing_off /system/bin/netsharing net off
-    disabled
-    oneshot
-
-service netsharing_pass /system/bin/netsharing net_pass on
-    disabled
-    oneshot
-
-service srv_ser2net /system/bin/ser2net -n
-    disabled
-
-on property:init.svc.bluetoothd=running
-    write /sys/class/bluetooth/hci0/idle_timeout 7000
-
 service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     class late_start
     user root
@@ -290,118 +276,19 @@ service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     disabled
     oneshot
 
-service ftp /system/bin/sdptool add --handle=0x1ff20 --psm=5257 --channel=20 FTP
-    class late_start
-    user bluetooth
-    group bluetooth net_bt_admin
-    disabled
-    oneshot
+#service qcom-post-boot /system/bin/sh /system/etc/init.qcom.post_boot.sh
+#    user root
+#    disabled
+#    oneshot
 
-service ftp_del /system/bin/sdptool del 0x1ff20
-    class late_start
-    user bluetooth
-    group bluetooth net_bt_admin
-    disabled
-    oneshot
+#service modem /system/xbin/wireless_modem
+#    user system
+#    group system radio
+#    disabled
+#    oneshot
 
-service map0 /system/bin/sdptool add --handle=0x1ff16 --channel=16 MAS0
-    class late_start
-    user bluetooth
-    group bluetooth net_bt_admin
-    disabled
-    oneshot
-
-service map0_del /system/bin/sdptool del 0x1ff16
-    class late_start
-    user bluetooth
-    group bluetooth net_bt_admin
-    disabled
-    oneshot
-
-service map1 /system/bin/sdptool add --handle=0x1ff17 --channel=17 MAS1
-    class late_start
-    user bluetooth
-    group bluetooth net_bt_admin
-    disabled
-    oneshot
-
-service map1_del /system/bin/sdptool del 0x1ff17
-    class late_start
-    user bluetooth
-    group bluetooth net_bt_admin
-    disabled
-    oneshot
-
-on property:service.ser2net.enable=1
-    start srv_ser2net
-
-on property:service.ser2net.enable=0
-    stop srv_ser2net
-
-service rmt_storage /system/bin/rmt_storage /dev/block/mmcblk0p13 /dev/block/mmcblk0p14
-    class core
-    user root
-    disabled
-
-on property:ro.emmc=1
-    start rmt_storage
-
-on property:init.svc.bootanim=stopped
-    start qcom-post-boot
-    # Overwrite ActivityManager's low memory killer settings
-    write /sys/module/lowmemorykiller/parameters/adj 0,2,4,7,9,12
-    write /sys/module/lowmemorykiller/parameters/minfree 2048,3072,4096,6144,10854,14132
-    write /sys/module/lowmemorykiller/parameters/minfile 2048,3072,4096,6144,10854,14132
-    write /sys/module/lowmemorykiller/parameters/check_filepages 1
-
-service qcom-post-boot /system/bin/sh /system/etc/init.qcom.post_boot.sh
-    user root
-    disabled
-    oneshot
-
-service modem /system/xbin/wireless_modem
-    user system
-    group system radio
-    disabled
-    oneshot
-
-service zchgd_offmode /system/bin/zchgd -pseudooffmode
-    user root
-    group root graphics
-    disabled
-
-service zchgd_onmode /system/bin/zchgd -onmode
-    user root
-    group root graphics
-    oneshot
-
-on property:service.modem.enable=1
-    start modem
-
-service dmagent /system/bin/dmagent -N
-
-    socket dmagent stream 660 root radio
-    user root
-    group radio cache inet misc
-
-service clockd /system/bin/clockd
-
-on property:ro.build.tags=test-keys
-    start htc_ebdlogd
-
-on property:ro.build.tags=release-keys
-    start htc_ebdlogd_rel
-
-#Enable Zimmer
-service zimmer /system/bin/zimmer on /dev/block/mmcblk0p27
-    user root
-    group root
-    oneshot
-
-#Enable ZCB
-service zcb /system/bin/logwrapper /system/bin/zcb service
-    user root
-    group root
+#on property:service.modem.enable=1
+#    start modem
     
 service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
     class late_start
