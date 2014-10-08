@@ -12,26 +12,13 @@ ro.telephony.ril_class=HTCQualcommRIL
 ro.telephony.ril.v3=signalstrength,singlepdp,skipbrokendatacall,datacallapn,facilitylock
 DEVICE_PROVISIONED=1
 
-# Time between scans in seconds. Keep it high to minimize battery drain.
-# This only affects the case in which there are remembered access points,
-# but none are in range.
+# Bluetooth
+ro.bt.bdaddr_path=/data/misc/bluedroid/bdaddr
+
+# Wifi
 wifi.supplicant_scan_interval=180
 wifi.interface=wlan0
 wifi.softap.interface=wlan0
- 
-# density in DPI of the LCD of this board. This is used to scale the UI
-# appropriately. If this property is not defined, the default value is 160 dpi.
-ro.sf.lcd_density = 160
-
-# View configuration for QVGA
-view.fading_edge_length = 8
-view.touch_slop = 15
-view.minimum_fling_velocity = 25
-view.scroll_friction = 0.008
-
-# The OpenGL ES API level that is natively supported by this device.
-# This is a 16.16 fixed point number
-ro.opengles.version = 131072
 
 # For no auto focus devices
 ro.workaround.noautofocus = 1
@@ -39,12 +26,9 @@ ro.workaround.noautofocus = 1
 # Increase SKIA decode memory capability for progressive jpg file
 ro.media.dec.jpeg.memcap = 20000000
 
-# For QC perf binary hooks
-# src:vendor/qcom/proprietary/android-perf/release/lib/<CPU arch>/libqc-opt.so
+# Qualcomm
 com.qc.hardware=true
 ro.vendor.extension_library=/system/lib/libqc-opt.so
-dev.pm.dyn_samplingrate=1
-dev.pm.dyn_sample_period=700000
 
 # HTC Acoustic
 htc.audio.alc.enable   = 1
@@ -69,6 +53,10 @@ use.non-omx.aac.decoder=false
 
 # Dalvik
 ro.config.low_ram=true
+
+# USB
+persist.sys.usb.config=mtp,adb
+persist.service.adb.enable=1
 
 # Misc
 ro.config.sync=yes

@@ -15,7 +15,11 @@
 # proprietary side of the device
 # Inherit from those products. Most specific first
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
+# The gps config appropriate for this device
+$(call inherit-product, device/common/gps/gps_eu_supl.mk)
+
+$(call inherit-product-if-exists, vendor/htc/golfu/golfu-vendor.mk)
 
 DEVICE_PACKAGE_OVERLAYS += device/htc/golfu/overlay
 
@@ -36,25 +40,40 @@ PRODUCT_PACKAGES += \
 
 # Audio
 PRODUCT_PACKAGES += \
-    audio.primary.msm7x27a \
-    audio_policy.msm7x27a \
     audio.a2dp.default \
-    audio_policy.conf \
-    libaudioutils \
-    audio.usb.default
+    audio_policy.msm7x27a \
+    audio.primary.msm7x27a
+    #audio.primary.msm7x27a \
+    #audio_policy.msm7x27a \
+    #audio.a2dp.default \
+    #audio_policy.conf \
+    #libaudioutils \
+    #audio.usb.default
 
-# Other
+ # GPS
 PRODUCT_PACKAGES += \
-    dexpreopt \
-    lights.golfu \
-    sensors.msm7x27a \
-    gps.golfu \
-    librpc \
+    gps.golfu
+    
+# Lights
+PRODUCT_PACKAGES += \
+    lights.golfu
+
+# Power HAL
+PRODUCT_PACKAGES += \
     power.msm7x27a
+    
+#HealthD
+PRODUCT_PACKAGES += \
+    libhealthd.msm7x27a
+    
+# Sensors
+PRODUCT_PACKAGES += \
+    sensors.msm7x27a \
+    librpc
    
 # Camera
 PRODUCT_PACKAGES += \
-    camera.default \
+    camera.msm7x27a \
     libsurfaceflinger_client
 
 # NFC
@@ -65,10 +84,43 @@ PRODUCT_PACKAGES += \
     Tag \
     com.android.nfc_extras \
 
+# Bluetooth
+PRODUCT_PACKAGES += \
+    btmac
+    
 # Misc
 PRODUCT_PACKAGES += \
     com.android.future.usb.accessory \
     dexpreopt
+    
+# Ramdisk
+PRODUCT_COPY_FILES += \
+    $(call find-copy-subdir-files,*,device/htc/golfu/ramdisk,root)
+
+# Init
+#PRODUCT_COPY_FILES += \
+#    device/htc/golfu/prebuilt/root/fstab.golfu:root/fstab.golfu \
+#    device/htc/golfu/prebuilt/root/init.golfu.rc:root/init.golfu.rc \
+#    device/htc/golfu/prebuilt/root/init.golfu.usb.rc:root/init.golfu.usb.rc \
+#    device/htc/golfu/prebuilt/root/ueventd.golfu.rc:root/ueventd.golfu.rc
+#   device/htc/golfu/prebuilt/root/init.recovery.golfu.rc:root/init.recovery.golfu.rc \
+
+# Recovery
+PRODUCT_COPY_FILES += \
+    $(call find-copy-subdir-files,*,device/htc/golfu/prebuilt/recovery,recovery/root)
+
+# TWRP Recovery
+#PRODUCT_COPY_FILES += \
+#    device/htc/golfu/recovery/twrp.fstab:recovery/root/etc/twrp.fstab \
+#    device/htc/golfu/recovery/sbin/choice_fn:recovery/root/sbin/choice_fn \
+#    device/htc/golfu/recovery/sbin/detect_key:recovery/root/sbin/detect_key \
+#    device/htc/golfu/recovery/sbin/offmode_charging:recovery/root/sbin/offmode_charging \
+#    device/htc/golfu/recovery/sbin/power_test:recovery/root/sbin/power_test \
+#    device/htc/golfu/recovery/sbin/rmt_storage:recovery/root/sbin/rmt_storage
+    
+# Prebuilt
+#PRODUCT_COPY_FILES += \
+#    $(call find-copy-subdir-files,*,device/htc/golfu/prebuilt/system,system)
 
 # Hardware properties 
 PRODUCT_COPY_FILES += \
@@ -89,17 +141,10 @@ PRODUCT_COPY_FILES += \
     frameworks/base/nfc-extras/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml
-
-# Init
-PRODUCT_COPY_FILES += \
-    device/htc/golfu/prebuilt/root/fstab.golfu:root/fstab.golfu \
-    device/htc/golfu/prebuilt/root/init.golfu.rc:root/init.golfu.rc \
-    device/htc/golfu/prebuilt/root/init.golfu.usb.rc:root/init.golfu.usb.rc \
-    device/htc/golfu/prebuilt/root/ueventd.golfu.rc:root/ueventd.golfu.rc \
-
+    
 # Camera
 PRODUCT_COPY_FILES += \
-    device/htc/golfu/proprietary/lib/hw/vendor-camera.default.so:system/lib/hw/vendor-camera.default.so \
+    device/htc/golfu/proprietary/lib/hw/camera.vendor.msm7x27a.so:system/lib/hw/camera.vendor.msm7x27a.so \
     device/htc/golfu/proprietary/lib/liboemcamera.so:system/lib/liboemcamera.so \
     device/htc/golfu/proprietary/lib/libmmipl.so:system/lib/libmmipl.so \
     device/htc/golfu/proprietary/lib/libmmjpeg.so:system/lib/libmmjpeg.so \
@@ -128,19 +173,13 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/libmmparser_divxdrmlib.so:system/lib/libmmparser_divxdrmlib.so \
     device/htc/golfu/proprietary/lib/libdivxdrmdecrypt.so:system/lib/libdivxdrmdecrypt.so
 
-# Set usb type
-ADDITIONAL_DEFAULT_PROPERTIES += \
-    persist.sys.usb.config=mass_storage,adb \
-    persist.service.adb.enable=1 \
-    ro.adb.secure=0
-
-# Publish that we support the live wallpaper feature.
+#Publish that we support the live wallpaper feature.
 PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:/system/etc/permissions/android.software.live_wallpaper.xml
 
 # Vold
-PRODUCT_COPY_FILES += \
-    device/htc/golfu/proprietary/etc/vold.fstab:system/etc/vold.fstab
+#PRODUCT_COPY_FILES += \
+#    device/htc/golfu/proprietary/etc/vold.fstab:system/etc/vold.fstab
 
 # DRM Plugin
 PRODUCT_COPY_FILES += \
@@ -159,7 +198,8 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/firmware/ath6k/AR6003/hw2.1.1/fw-3.bin:system/etc/firmware/ath6k/AR6003/hw2.1.1/fw-3.bin \
     device/htc/golfu/proprietary/etc/firmware/ath6k/AR6003/hw2.1.1/nullTestFlow.bin:system/etc/firmware/ath6k/AR6003/hw2.1.1/nullTestFlow.bin \
     device/htc/golfu/proprietary/etc/firmware/ath6k/AR6003/hw2.1.1/utf.bin:system/etc/firmware/ath6k/AR6003/hw2.1.1/utf.bin \
-    device/htc/golfu/proprietary/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf
+    device/htc/golfu/proprietary/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
+    device/htc/golfu/proprietary/etc/wifi/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
 
 # Audio
 PRODUCT_COPY_FILES += \
@@ -197,7 +237,25 @@ PRODUCT_COPY_FILES += \
 # RIL
 PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/libhtc_ril.so:system/lib/libhtc_ril.so \
-    device/htc/golfu/proprietary/lib/libqc-opt.so:system/lib/libqc-opt.so
+    device/htc/golfu/proprietary/lib/libqc-opt.so:system/lib/libqc-opt.so \
+    device/htc/golfu/proprietary/bin/qmuxd:system/bin/qmuxd
+
+#Lib for qmuxd
+PRODUCT_COPY_FILES += \
+    device/htc/golfu/proprietary/lib/libdiag.so:system/lib/libdiag.so \
+    device/htc/golfu/proprietary/lib/libdsi_netctrl.so:system/lib/libdsi_netctrl.so \
+    device/htc/golfu/proprietary/lib/libdsutils.so:system/lib/libdsutils.so \
+    device/htc/golfu/proprietary/lib/libnv.so:system/lib/libnv.so \
+    device/htc/golfu/proprietary/lib/liboncrpc.so:system/lib/liboncrpc.so \
+    device/htc/golfu/proprietary/lib/libidl.so:system/lib/libidl.so \
+    device/htc/golfu/proprietary/lib/libqdp.so:system/lib/libqdp.so \
+    device/htc/golfu/proprietary/lib/libqmi.so:system/lib/libqmi.so \
+    device/htc/golfu/proprietary/lib/libqmiservices.so:system/lib/libqmiservices.so \
+    
+# Bluetooth
+PRODUCT_COPY_FILES += \
+    device/htc/golfu/proprietary/lib/liboncrpc.so:obj/lib/liboncrpc.so \
+    device/htc/golfu/proprietary/lib/libnv.so:obj/lib/libnv.so
 
 # NFC firmware
 PRODUCT_COPY_FILES += \
@@ -225,9 +283,9 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/usr/idc/himax-touchscreen.idc:system/usr/idc/himax-touchscreen.idc
 
 # Prebuilt Modules
-PRODUCT_COPY_FILES += \
-    device/htc/golfu/proprietary/lib/modules/ath6kl_sdio.ko:system/lib/modules/ath6kl_sdio.ko \
-    device/htc/golfu/proprietary/lib/modules/cfg80211.ko:system/lib/modules/cfg80211.ko
+#PRODUCT_COPY_FILES += \
+#    device/htc/golfu/proprietary/lib/modules/ath6kl_sdio.ko:system/lib/modules/ath6kl_sdio.ko \
+#    device/htc/golfu/proprietary/lib/modules/cfg80211.ko:system/lib/modules/cfg80211.ko
 #    device/htc/golfu/proprietary/lib/modules/compat.ko:system/lib/modules/compat.ko
 #    device/htc/golfu/proprietary/lib/modules/kineto_gan.ko:system/lib/modules/kineto_gan.ko
 
@@ -254,22 +312,15 @@ PRODUCT_COPY_FILES += \
 #    device/htc/golfu/proprietary/bin/sdptool:system/bin/sdptool \
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.setupwizard.enable_bypass=1 \
-    ro.telephony.call_ring.multiple=false \
-    ro.vold.umsdirtyratio=50 \
-    persist.sys.purgeable_assets=1 \
-    ro.telephony.call_ring.delay=3000 \
-    ro.config.low_ram=true \
-    dalvik.vm.dexopt-flags=v=a,o=v,m=y,u=y \
-    dalvik.vm.heapstartsize=5m \
-    dalvik.vm.heapgrowthlimit=48m \
-    dalvik.vm.heapsize=64m \
-    dalvik.vm.heaptargetutilization=0.25 \
-    dalvik.vm.heapminfree=512k \
-    dalvik.vm.heapmaxfree=2m \
-    persist.sys.usb.config=mass_storage,adb \
+    ro.setupwizard.enable_bypass=1
+
+ADDITIONAL_DEFAULT_PROPERTIES += \
+    ro.adb.secure=0 \
+    ro.secure=0
+
+$(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
+$(call inherit-product, build/target/product/full_base_telephony.mk)
     
 PRODUCT_AAPT_CONFIG := normal mdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
-PRODUCT_TAGS += dalvik.gc.type-precise
