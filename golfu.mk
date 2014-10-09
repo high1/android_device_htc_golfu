@@ -61,14 +61,14 @@ PRODUCT_PACKAGES += \
     libhealthd.msm7x27a
     
 # Sensors
-PRODUCT_PACKAGES += \
-    sensors.msm7x27a \
-    librpc
+#PRODUCT_PACKAGES += \
+#    sensors.msm7x27a \
+#    librpc
    
 # Camera
-PRODUCT_PACKAGES += \
-    camera.msm7x27a \
-    libsurfaceflinger_client
+#PRODUCT_PACKAGES += \
+#    camera.msm7x27a \
+#    libsurfaceflinger_client
 
 # NFC
 PRODUCT_PACKAGES += \
