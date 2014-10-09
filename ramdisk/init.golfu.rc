@@ -80,7 +80,9 @@ on boot
     #setkey 0xc0 0xe7 0x706
     #setkey 0xc0 0x8b 0x707
     #setkey 0xc0 0x6b 0x20c
-
+    
+    chmod 0644 /proc/cmdline
+    
     # HTC SSD Audio
     mkdir /data/audio
     chown media audio /data/audio
