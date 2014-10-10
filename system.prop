@@ -5,11 +5,9 @@
 # Telephony
 rild.libpath=/system/lib/libhtc_ril.so
 rild.libargs=-d /dev/smd0
-rilswitch.vendorlibpath=/system/lib/libhtc_ril.so
 ril.subscription.types=NV,RUIM
 ro.baseband.arch = msm
 ro.telephony.ril_class=HTCQualcommRIL
-ro.telephony.ril.v3=signalstrength,singlepdp,skipbrokendatacall,datacallapn,facilitylock
 DEVICE_PROVISIONED=1
 
 # Bluetooth
