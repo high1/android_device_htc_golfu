@@ -67,8 +67,8 @@ PRODUCT_PACKAGES += \
    
 # Camera
 #PRODUCT_PACKAGES += \
-#    camera.msm7x27a \
-#    libsurfaceflinger_client
+     camera.default \
+     libsurfaceflinger_client
 
 # NFC
 PRODUCT_PACKAGES += \

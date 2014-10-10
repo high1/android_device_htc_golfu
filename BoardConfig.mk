@@ -1,4 +1,4 @@
-# Copyright (C) 2011 The Android Open Source Project
+# Copyright (C) 2014 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 
-#USE_CAMERA_STUB := true
+USE_CAMERA_STUB := true
 BOARD_VENDOR := htc
 
 # Platform
@@ -23,11 +23,13 @@ TARGET_NO_RADIOIMAGE := true
 TARGET_BOARD_PLATFORM := msm7x27a
 TARGET_BOARD_PLATFORM_GPU := qcom-adreno200
 
+# Board 
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_VARIANT := cortex-a5
+TARGET_BOOTLOADER_BOARD_NAME := golfu
 
 ARCH_ARM_HAVE_TLS_REGISTER := true
 
@@ -53,7 +55,6 @@ TARGET_USE_QCOM_BIONIC_OPTIMIZATION := true
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/htc/golfu
 TARGET_KERNEL_CONFIG := golfu_defconfig
-TARGET_BOOTLOADER_BOARD_NAME := golfu
 BOARD_KERNEL_CMDLINE := no_console_suspend=1 console=null
 BOARD_KERNEL_BASE := 0x13000000
 
@@ -121,7 +122,7 @@ TARGET_ARCH_LOWMEM := true
 
 # FM Radio
 BOARD_HAVE_FM_RADIO := true
-# ? COMMON_GLOBAL_CFLAGS += -DHAVE_FM_RADIO
+COMMON_GLOBAL_CFLAGS += -DHAVE_FM_RADIO
 BOARD_VENDOR_USE_AKMD := akm8975
 BOARD_VENDOR_QCOM_AMSS_VERSION := 6225
 
@@ -142,7 +143,7 @@ BOARD_USE_NEW_LIBRIL_HTC := true
 
 # Camera
 BOARD_NEEDS_MEMORYHEAPPMEM := true
-#CAMERA_USES_SURFACEFLINGER_CLIENT_STUB := true
+CAMERA_USES_SURFACEFLINGER_CLIENT_STUB := true
 #BOARD_USES_QCOM_LEGACY_CAM_PARAMS := true
 COMMON_GLOBAL_CFLAGS += -DICS_CAMERA_BLOB -DNEEDS_VECTORIMPL_SYMBOLS
 
