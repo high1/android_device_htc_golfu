@@ -122,7 +122,7 @@ TARGET_ARCH_LOWMEM := true
 
 # FM Radio
 BOARD_HAVE_FM_RADIO := true
-COMMON_GLOBAL_CFLAGS += -DHAVE_FM_RADIO
+#COMMON_GLOBAL_CFLAGS += -DHAVE_FM_RADIO - this duplicates definition in previous line and is not needed
 BOARD_VENDOR_USE_AKMD := akm8975
 BOARD_VENDOR_QCOM_AMSS_VERSION := 6225
 

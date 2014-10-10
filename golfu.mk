@@ -66,10 +66,10 @@ PRODUCT_PACKAGES += \
 #    librpc
    
 # Camera
-#PRODUCT_PACKAGES += \
-     camera.default \
+PRODUCT_PACKAGES += \
      libsurfaceflinger_client
-
+     #camera.default \
+     
 # NFC
 PRODUCT_PACKAGES += \
     libnfc \
@@ -121,7 +121,7 @@ PRODUCT_COPY_FILES += \
     
 # Camera
 PRODUCT_COPY_FILES += \
-    device/htc/golfu/proprietary/lib/hw/camera.vendor.msm7x27a.so:system/lib/hw/camera.vendor.msm7x27a.so \
+    device/htc/golfu/proprietary/lib/hw/camera.msm7x27a.so:system/lib/hw/camera.msm7x27a.so \
     device/htc/golfu/proprietary/lib/liboemcamera.so:system/lib/liboemcamera.so \
     device/htc/golfu/proprietary/lib/libmmipl.so:system/lib/libmmipl.so \
     device/htc/golfu/proprietary/lib/libmmjpeg.so:system/lib/libmmjpeg.so \
