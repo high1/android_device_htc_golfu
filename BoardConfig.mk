@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 
-USE_CAMERA_STUB := true
+#USE_CAMERA_STUB := true
 BOARD_VENDOR := htc
 
 # Platform
