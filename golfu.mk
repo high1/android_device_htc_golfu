@@ -25,24 +25,31 @@ DEVICE_PACKAGE_OVERLAYS += device/htc/golfu/overlay
 
 # Video decoding
 PRODUCT_PACKAGES += \
-    libmm-omxcore \
     libstagefrighthw \
     libOmxCore \
-    libI420colorconvert
-
+    libdashplayer
+    #libmm-omxcore \
+    #libI420colorconvert \
+    
 # Graphics 
 PRODUCT_PACKAGES += \
-    libgenlock \
     copybit.msm7x27a \
     gralloc.msm7x27a \
     hwcomposer.msm7x27a \
-    libtilerenderer
+    libgenlock \
+    liboverlay \
+    libtilerenderer\
+    libqdMetaData
 
 # Audio
 PRODUCT_PACKAGES += \
-    audio.a2dp.default \
+    audio.primary.msm7x27a \
     audio_policy.msm7x27a \
-    audio.primary.msm7x27a
+    audio.a2dp.default \
+    audio.usb.default \
+    audio_policy.conf \
+    libaudioutils \
+    libaudio-resampler
 
  # GPS
 PRODUCT_PACKAGES += \
@@ -85,7 +92,9 @@ PRODUCT_PACKAGES += \
 # Misc
 PRODUCT_PACKAGES += \
     com.android.future.usb.accessory \
-    dexpreopt
+    dexpreopt \
+    libnetcmdiface \
+    librpc \
     
 # Ramdisk
 PRODUCT_COPY_FILES += \
@@ -176,6 +185,7 @@ PRODUCT_COPY_FILES += \
 
 # Audio
 PRODUCT_COPY_FILES += \
+    device/htc/golfu/configs/audio_policy.conf:system/etc/audio_policy.conf \
     device/htc/golfu/proprietary/etc/AudioFilter.csv:system/etc/AudioFilter.csv \
     device/htc/golfu/proprietary/etc/AudioBTID.csv:system/etc/AudioBTID.csv \
     device/htc/golfu/proprietary/etc/AudioPara4.csv:system/etc/AudioPara4.csv \
