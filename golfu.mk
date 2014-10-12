@@ -67,10 +67,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libhealthd.msm7x27a
     
-# Sensors
-#PRODUCT_PACKAGES += \
-#    sensors.msm7x27a \
-#    librpc
+Sensors
+PRODUCT_PACKAGES += \
+    sensors.msm7x27a
    
 # Camera
 PRODUCT_PACKAGES += \
