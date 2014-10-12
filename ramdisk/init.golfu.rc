@@ -15,7 +15,7 @@ on init
 on fs
     # mount mmc partitions
     mount_all /fstab.golfu
-    start adbd
+    #start adbd - we do not need it now so early
     
 on post-fs-data
     mkdir /data/misc/bluetooth 0770 bluetooth bluetooth

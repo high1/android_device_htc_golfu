@@ -185,7 +185,7 @@ PRODUCT_COPY_FILES += \
 
 # Audio
 PRODUCT_COPY_FILES += \
-    device/htc/golfu/configs/audio_policy.conf:system/etc/audio_policy.conf \
+    device/htc/golfu/proprietary/etc/audio_policy.conf:system/etc/audio_policy.conf \
     device/htc/golfu/proprietary/etc/AudioFilter.csv:system/etc/AudioFilter.csv \
     device/htc/golfu/proprietary/etc/AudioBTID.csv:system/etc/AudioBTID.csv \
     device/htc/golfu/proprietary/etc/AudioPara4.csv:system/etc/AudioPara4.csv \
@@ -295,12 +295,8 @@ PRODUCT_COPY_FILES += \
 #    device/htc/golfu/proprietary/bin/sdptool:system/bin/sdptool \
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.setupwizard.enable_bypass=1
+    ro.setupwizard.enable_bypass=1 \
     ro.com.google.gmsversion=4.0_r2
-	
-ADDITIONAL_DEFAULT_PROPERTIES += \
-    ro.adb.secure=0 \
-    ro.secure=0
 
 # Override /proc/sys/vm/dirty_ratio on UMS
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -309,6 +305,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Use KSM by default
 PRODUCT_PROPERTY_OVERRIDES += \
 	ro.ksm.default=1
+	
+ADDITIONAL_DEFAULT_PROPERTIES += \
+    ro.adb.secure=0 \
+    ro.secure=0
 
 # lower the increment
 ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.heapgrowthlimit=64m	
