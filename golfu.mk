@@ -296,11 +296,23 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.setupwizard.enable_bypass=1
-
+    ro.com.google.gmsversion=4.0_r2
+	
 ADDITIONAL_DEFAULT_PROPERTIES += \
     ro.adb.secure=0 \
     ro.secure=0
 
+# Override /proc/sys/vm/dirty_ratio on UMS
+PRODUCT_PROPERTY_OVERRIDES += \
+	ro.vold.umsdirtyratio=20
+
+# Use KSM by default
+PRODUCT_PROPERTY_OVERRIDES += \
+	ro.ksm.default=1
+
+# lower the increment
+ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.heapgrowthlimit=64m	
+	
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
 $(call inherit-product, build/target/product/full_base_telephony.mk)
     
