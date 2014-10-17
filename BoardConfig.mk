@@ -75,6 +75,11 @@ BOARD_HAL_STATIC_LIBRARIES := libhealthd.msm7x27a
 # SDcard support
 #BOARD_SDCARD_INTERNAL_DEVICE := /dev/block/mmcblk0p32
 
+# UMS
+BOARD_USE_USB_MASS_STORAGE_SWITCH := true
+TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/msm_otg/msm_hsusb/gadget/lun0/file"
+BOARD_UMS_LUNFILE := "/sys/devices/platform/msm_otg/msm_hsusb/gadget/lun0/file"
+
 # Vold
 #BOARD_VOLD_MAX_PARTITIONS := 32
 #BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
@@ -172,8 +177,6 @@ TARGET_PROVIDES_POWERHAL := true
 # Recovery
 TARGET_RECOVERY_FSTAB := device/htc/golfu/ramdisk/fstab.golfu
 BOARD_HAS_NO_SELECT_BUTTON := true
-BOARD_UMS_LUNFILE := "/sys/devices/platform/msm_otg/msm_hsusb/gadget/lun0/file"
-#BOARD_USE_USB_MASS_STORAGE_SWITCH := true
 
 # TWRP
 TARGET_RECOVERY_INITRC := device/htc/golfu/recovery/init-twrp.rc
