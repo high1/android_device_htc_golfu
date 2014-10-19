@@ -27,8 +27,8 @@ DEVICE_PACKAGE_OVERLAYS += device/htc/golfu/overlay
 PRODUCT_PACKAGES += \
     libstagefrighthw \
     libOmxCore \
-    libdashplayer
-    #libmm-omxcore \
+    libdashplayer \
+    libmm-omxcore \
     #libI420colorconvert \
     
 # Graphics 
@@ -241,6 +241,7 @@ PRODUCT_COPY_FILES += \
 
 # NFC firmware
 PRODUCT_COPY_FILES += \
+    device/htc/golfu/proprietary/lib/hw/nfc.golfu.so:system/lib/hw/nfc.golfu.so \
     device/htc/golfu/proprietary/lib/libpn544_fw.so:system/vendor/firmware/libpn544_fw.so
 
 # Audio DSP Profiles
@@ -290,8 +291,6 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/bin/ath6kl-fwlog-record:system/bin/ath6kl-fwlog-record \
     device/htc/golfu/proprietary/bin/athtestcmd:system/bin/athtestcmd \
     device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem 
-#    device/htc/golfu/proprietary/bin/rild:system/bin/rild \
-#    device/htc/golfu/proprietary/bin/sdptool:system/bin/sdptool \
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.setupwizard.enable_bypass=1 \

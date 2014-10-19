@@ -85,25 +85,21 @@ BOARD_HAVE_BLUETOOTH := true
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/htc/golfu/bluetooth
 
 # Wi-Fi
-BOARD_HAS_ATH_WLAN          := true
-TARGET_CUSTOM_WIFI          := ../../device/htc/golfu/libhardware_legacy/wifi/wifi.c
-BOARD_WLAN_DEVICE           := ath6kl
+BOARD_HAS_ATH_WLAN := true
+TARGET_CUSTOM_WIFI := ../../device/htc/golfu/libhardware_legacy/wifi/wifi.c
+BOARD_WLAN_DEVICE := ath6kl
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
-BOARD_HOSTAPD_DRIVER        := NL80211
-BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
-WPA_SUPPLICANT_VERSION      := VER_0_8_X
-HOSTAPD_VERSION             := VER_0_8_X
-WIFI_EXT_MODULE_PATH        := "/system/lib/modules/cfg80211.ko"
-WIFI_EXT_MODULE_NAME        := "cfg80211"
-WIFI_EXT_MODULE_ARG         := ""
-WIFI_DRIVER_MODULE_PATH     := "/system/lib/modules/ath6kl_sdio.ko"
-WIFI_DRIVER_MODULE_NAME     := "wlan"
-WIFI_DRIVER_MODULE_ARG      := ""
-WIFI_TEST_INTERFACE         := "sta"
-WIFI_DRIVER_FW_PATH_STA     := "sta"
-WIFI_DRIVER_FW_PATH_AP      := "ap"
-WIFI_DRIVER_FW_PATH_P2P     := "p2p"
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+HOSTAPD_VERSION := VER_0_8_X
+WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/ath6kl_sdio.ko"
+WIFI_DRIVER_MODULE_NAME := "ath6kl_sdio"
+WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 debug_mask=0x2413"
+WIFI_EXT_MODULE_PATH := "/system/lib/modules/cfg80211.ko"
+WIFI_EXT_MODULE_NAME := "cfg80211"
+WIFI_EXT_MODULE_ARG := ""
 
 # Video
 TARGET_QCOM_LEGACY_OMX := true 

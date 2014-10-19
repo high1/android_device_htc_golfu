@@ -8,3 +8,4 @@
 /dev/block/mmcblk0p21                           /recovery           emmc    defaults                                    defaults
 /dev/block/mmcblk0p17                           /misc               emmc    defaults                                    defaults 
 /devices/platform/msm_sdcc.1/mmc_host           auto                auto    defaults                                    voldmanaged=sdcard0:auto,noemulatedsd
+/dev/block/zram0                                none                swap    defaults                                    zramsize=67108864
