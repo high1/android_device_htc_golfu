@@ -23,5 +23,6 @@ WORKING :-
 NOT WORKING :-
 --------------
 
-- WIFI ( Disbaled for now )
-- Camera ( Some Orientation prob at the moment )
+- WIFI ( Disabled for now )
+- Camera ( Video recording not working )
+- Work on classic webview is in progress on another tree
