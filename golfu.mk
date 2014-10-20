@@ -28,7 +28,7 @@ PRODUCT_PACKAGES += \
     libstagefrighthw \
     libOmxCore \
     libdashplayer \
-    libmm-omxcore \
+    libmm-omxcore
     #libI420colorconvert \
     
 # Graphics 
@@ -136,8 +136,6 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/libcameraface.so:system/lib/libcameraface.so \
     device/htc/golfu/proprietary/lib/libcamerapp.so:system/lib/libcamerapp.so \
     device/htc/golfu/proprietary/lib/libOlaEngine.so:system/lib/libOlaEngine.so \
-    device/htc/golfu/proprietary/lib/libchromatix_mt9t013_default_video.so:system/lib/libchromatix_mt9t013_default_video.so \
-    device/htc/golfu/proprietary/lib/libchromatix_mt9t013_preview.so:system/lib/libchromatix_mt9t013_preview.so \
     device/htc/golfu/proprietary/lib/libchromatix_s5k4e1_default_video.so:system/lib/libchromatix_s5k4e1_default_video.so \
     device/htc/golfu/proprietary/lib/libchromatix_s5k4e1_preview.so:system/lib/libchromatix_s5k4e1_preview.so \
     device/htc/golfu/proprietary/lib/libchromatix_s5k4e1_ar.so:system/lib/libchromatix_s5k4e1_ar.so \
@@ -264,13 +262,6 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/usr/icu/icudt46l.dat:system/usr/icu/icudt46l.dat \
     device/htc/golfu/proprietary/usr/idc/synaptics-rmi-touchscreen.idc:system/usr/idc/synaptics-rmi-touchscreen.idc \
     device/htc/golfu/proprietary/usr/idc/himax-touchscreen.idc:system/usr/idc/himax-touchscreen.idc
-
-# Prebuilt Modules
-#PRODUCT_COPY_FILES += \
-#    device/htc/golfu/proprietary/lib/modules/ath6kl_sdio.ko:system/lib/modules/ath6kl_sdio.ko \
-#    device/htc/golfu/proprietary/lib/modules/cfg80211.ko:system/lib/modules/cfg80211.ko
-#    device/htc/golfu/proprietary/lib/modules/compat.ko:system/lib/modules/compat.ko
-#    device/htc/golfu/proprietary/lib/modules/kineto_gan.ko:system/lib/modules/kineto_gan.ko
 
 # Proprietary Binaries
 PRODUCT_COPY_FILES += \
