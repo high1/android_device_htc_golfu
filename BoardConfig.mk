@@ -102,9 +102,15 @@ HOSTAPD_VERSION := VER_0_8_X
 WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/ath6kl_sdio.ko"
 WIFI_DRIVER_MODULE_NAME := "ath6kl_sdio"
 WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 debug_mask=0x2413"
+#WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1"
+#WIFI_DRIVER_MODULE_AP_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 debug_mask=0x2413"
 WIFI_EXT_MODULE_PATH := "/system/lib/modules/cfg80211.ko"
 WIFI_EXT_MODULE_NAME := "cfg80211"
 WIFI_EXT_MODULE_ARG := ""
+#WIFI_TEST_INTERFACE := "sta"
+#WIFI_DRIVER_FW_PATH_STA := "sta"
+#WIFI_DRIVER_FW_PATH_AP := "ap"
+#WIFI_DRIVER_FW_PATH_P2P := "p2p"
 
 # Video
 TARGET_QCOM_LEGACY_OMX := true 
