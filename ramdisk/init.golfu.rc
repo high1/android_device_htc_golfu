@@ -29,6 +29,10 @@ on post-fs-data
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
     
+    # Dummy file, to keep the API happy. The default firmware does both modes
+    write /data/misc/wifi/fwpath ""
+    chmod 0666 /data/misc/wifi/fwpath
+    
     mkdir /data/radio 0770 radio radio
     chmod 2770 /data/radio
     mkdir /dev/radio 0770 radio radio
@@ -218,42 +222,20 @@ service wpa_supplicant /system/bin/wpa_supplicant -dddd \
     disabled
     oneshot
 
-service p2p_supplicant /system/bin/wpa_supplicant -dddd \
-    -iwlan0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
-    -I/system/etc/wifi/p2p_supplicant_overlay.conf \
-    -O/data/misc/wifi/sockets \
-    -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0
-    class main
-    socket wpa_wlan0 dgram 660 wifi wifi
-    disabled
-    oneshot
-    
-#service p2p_supplicant /system/bin/wpa_supplicant -dddd \
-#     -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
-#     -I/system/etc/wifi/p2p_supplicant_overlay.conf -N \
-#     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
-#     -I/system/etc/wifi/wpa_supplicant_overlay.conf \
-#     -O/data/misc/wifi/sockets -puse_p2p_group_interface=1 \
-#     -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0
-#	class main
-#	socket wpa_wlan0 dgram 660 wifi wifi
-#	disabled
-#	oneshot
+#service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
+#    class late_start
+#    socket hostapd_wlan0 dgram 660 root wifi
+#    user root
+#    group wifi
+#    oneshot
+#    disabled
 
 service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
     class late_start
-    socket hostapd_wlan0 dgram 660 root wifi
     user root
-    group wifi
+    group root
     oneshot
     disabled
-
-#service hostapd /system/bin/hostapd -dddd /data/hostapd/hostapd.conf
-#    class late_start
-#    user root
-#    group root
-#    oneshot
-#    disabled
 
 service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
     class late_start

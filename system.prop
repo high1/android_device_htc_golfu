@@ -21,9 +21,6 @@ wifi.softap.interface=wlan0
 # For no auto focus devices
 ro.workaround.noautofocus = 1
 
-# Increase SKIA decode memory capability for progressive jpg file
-ro.media.dec.jpeg.memcap = 20000000
-
 # Qualcomm
 com.qc.hardware=true
 ro.vendor.extension_library=/system/lib/libqc-opt.so
@@ -49,7 +46,20 @@ audio.decoder_override_check=true
 use.non-omx.mp3.decoder=false
 use.non-omx.aac.decoder=false
 
-# Dalvik
+# Media
+media.stagefright.enable-player=true
+media.stagefright.enable-scan=true
+media.stagefright.enable-http=true
+media.stagefright.enable-fma2dp=true
+media.stagefright.enable-aac=true
+media.stagefright.enable-qcp=true
+media.stagefright.enable-meta=false
+
+# Webkit
+persist.webview.provider=classic
+
+# Memory
+ro.ksm.default=1
 ro.config.low_ram=true
 
 # USB
@@ -59,3 +69,4 @@ persist.service.adb.enable=1
 # Misc
 ro.config.sync=yes
 ro.phone_storage=0
+

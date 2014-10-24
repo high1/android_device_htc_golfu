@@ -29,17 +29,16 @@ PRODUCT_PACKAGES += \
     libOmxCore \
     libdashplayer \
     libmm-omxcore
-    #libI420colorconvert \
     
 # Graphics 
 PRODUCT_PACKAGES += \
     copybit.msm7x27a \
     gralloc.msm7x27a \
     hwcomposer.msm7x27a \
-    libgenlock \
-    liboverlay \
-    libtilerenderer\
-    libqdMetaData
+    libtilerenderer
+    #libgenlock \
+    #liboverlay 
+    #libqdMetaData
 
 # Audio
 PRODUCT_PACKAGES += \
@@ -47,9 +46,9 @@ PRODUCT_PACKAGES += \
     audio_policy.msm7x27a \
     audio.a2dp.default \
     audio.usb.default \
-    audio_policy.conf \
     libaudioutils \
     libaudio-resampler
+    #audio_policy.conf \
 
  # GPS
 PRODUCT_PACKAGES += \
@@ -67,9 +66,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libhealthd.msm7x27a
     
-#Sensors
+# Webkit
 PRODUCT_PACKAGES += \
-   sensors.msm7x27a
+libwebcore
    
 # Camera
 PRODUCT_PACKAGES += \
@@ -120,7 +119,6 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
-    frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
     frameworks/native/data/etc/android.software.sip.xml:system/etc/permissions/android.software.sip.xml \
     frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
     frameworks/base/nfc-extras/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml \
@@ -178,7 +176,7 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/firmware/ath6k/AR6003/hw2.1.1/nullTestFlow.bin:system/etc/firmware/ath6k/AR6003/hw2.1.1/nullTestFlow.bin \
     device/htc/golfu/proprietary/etc/firmware/ath6k/AR6003/hw2.1.1/utf.bin:system/etc/firmware/ath6k/AR6003/hw2.1.1/utf.bin \
     device/htc/golfu/proprietary/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
-    device/htc/golfu/proprietary/etc/wifi/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
+    device/htc/golfu/proprietary/etc/wifi/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf
 
 # Audio
 PRODUCT_COPY_FILES += \
@@ -283,24 +281,10 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/bin/athtestcmd:system/bin/athtestcmd \
     device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem 
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.setupwizard.enable_bypass=1 \
-    ro.com.google.gmsversion=4.0_r2
-
-# Override /proc/sys/vm/dirty_ratio on UMS
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.vold.umsdirtyratio=20
-
-# Use KSM by default
-PRODUCT_PROPERTY_OVERRIDES += \
-	ro.ksm.default=1
 	
 ADDITIONAL_DEFAULT_PROPERTIES += \
     ro.adb.secure=0 \
     ro.secure=0
-
-# lower the increment
-ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.heapgrowthlimit=64m	
 	
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
 $(call inherit-product, build/target/product/full_base_telephony.mk)
