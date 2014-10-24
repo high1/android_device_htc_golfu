@@ -1,0 +1,57 @@
+From 8c9ccb1157332427aafdbc8ab6a4d722b6c2d62c Mon Sep 17 00:00:00 2001
+From: Konsta <konsta09@gmail.com>
+Date: Mon, 10 Mar 2014 09:53:50 +0200
+Subject: [PATCH] use NARROW_COLUMNS when using classic webview
+
+This reverts commit a31cfea37c3892f68807d2df52c9d482e9e1f8f6
+when using classic webview.
+
+Change-Id: I26741a7b956b384258f0cd8aa444c7ba86fd5390
+---
+ src/com/android/browser/BrowserSettings.java |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/src/com/android/browser/BrowserSettings.java b/src/com/android/browser/BrowserSettings.java
+index 8865f32..d9228a7 100644
+--- a/src/com/android/browser/BrowserSettings.java
++++ b/src/com/android/browser/BrowserSettings.java
+@@ -26,6 +26,7 @@ import android.net.ConnectivityManager;
+ import android.net.NetworkInfo;
+ import android.os.Build;
+ import android.os.Message;
++import android.os.SystemProperties;
+ import android.preference.PreferenceManager;
+ import android.provider.Browser;
+ import android.provider.Settings;
+@@ -356,9 +357,14 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
+     }
+ 
+     public LayoutAlgorithm getLayoutAlgorithm() {
++        boolean useClassicWebview = "classic".equals(SystemProperties.get("persist.webview.provider"));
+         LayoutAlgorithm layoutAlgorithm = LayoutAlgorithm.NORMAL;
+         if (autofitPages()) {
+-            layoutAlgorithm = LayoutAlgorithm.TEXT_AUTOSIZING;
++            if (useClassicWebview) {
++                layoutAlgorithm = LayoutAlgorithm.NARROW_COLUMNS;
++            } else {
++                layoutAlgorithm = LayoutAlgorithm.TEXT_AUTOSIZING;
++            }
+         }
+         if (isDebugEnabled()) {
+             if (isSmallScreen()) {
+@@ -367,7 +373,11 @@ public class BrowserSettings implements OnSharedPreferenceChangeListener,
+                 if (isNormalLayout()) {
+                     layoutAlgorithm = LayoutAlgorithm.NORMAL;
+                 } else {
+-                    layoutAlgorithm = LayoutAlgorithm.TEXT_AUTOSIZING;
++                    if (useClassicWebview) {
++                        layoutAlgorithm = LayoutAlgorithm.NARROW_COLUMNS;
++                    } else {
++                        layoutAlgorithm = LayoutAlgorithm.TEXT_AUTOSIZING;
++                    }
+                 }
+             }
+         }
+-- 
+1.7.9.5
+

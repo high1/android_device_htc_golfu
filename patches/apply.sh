@@ -3,6 +3,7 @@
 MYABSPATH=$(readlink -f "$0")
 PATCHBASE=$(dirname "$MYABSPATH")
 CMBASE=$(readlink -f "$PATCHBASE/../../../../")
+echo $CMBASE
 
 for i in $(find "$PATCHBASE"/* -type d); do
 	PATCHNAME=$(basename "$i")
