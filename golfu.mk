@@ -27,8 +27,7 @@ DEVICE_PACKAGE_OVERLAYS += device/htc/golfu/overlay
 PRODUCT_PACKAGES += \
     libstagefrighthw \
     libOmxCore \
-    libdashplayer \
-    libmm-omxcore
+    libdashplayer
     
 # Graphics 
 PRODUCT_PACKAGES += \
