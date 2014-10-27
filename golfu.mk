@@ -67,7 +67,7 @@ PRODUCT_PACKAGES += \
     
 # Webkit
 PRODUCT_PACKAGES += \
-libwebcore
+    libwebcore
    
 # Camera
 PRODUCT_PACKAGES += \
