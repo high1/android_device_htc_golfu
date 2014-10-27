@@ -30,7 +30,7 @@
 
 extern "C" {
 #include <linux/msm_audio.h>
-#include <linux/ion.h>
+#include <linux/msm_ion.h>
 #include <linux/msm_audio_voicememo.h>
 #ifdef QCOM_VOIP_ENABLED
 #include <linux/msm_audio_mvs.h>
@@ -322,11 +322,11 @@ private:
                                 int *pFormat,
                                 uint32_t *pChannels,
                                 uint32_t *pRate);
-        virtual uint32_t    sampleRate() const {ALOGD(" AudioStreamOutDirect: SampleRate %d\n",mSampleRate); return mSampleRate; }
+        virtual uint32_t    sampleRate() const {ALOGD(" AudioStreamOutDirect: SampleRate %d\n",mSampleRate); return 8000; }
         // must be 32-bit aligned - driver only seems to like 4800
-        virtual size_t      bufferSize() const { ALOGD(" AudioStreamOutDirect: bufferSize %d\n",mBufferSize);return mBufferSize; }
+        virtual size_t      bufferSize() const { ALOGD(" AudioStreamOutDirect: bufferSize %d\n",mBufferSize);return 320; }
         virtual uint32_t    channels() const {ALOGD(" AudioStreamOutDirect: channels %d\n",mChannels); return mChannels; }
-        virtual int         format() const {ALOGD(" AudioStreamOutDirect: format %d\n",mFormat);return mFormat; }
+        virtual int         format() const {ALOGD(" AudioStreamOutDirect: format %d\n",mFormat); return AUDIO_FORMAT_PCM_16_BIT; }
         virtual uint32_t    latency() const { return (1000*AUDIO_HW_NUM_OUT_BUF*(bufferSize()/frameSize()))/sampleRate()+AUDIO_HW_OUT_LATENCY_MS; }
         virtual status_t    setVolume(float left, float right) { return INVALID_OPERATION; }
         virtual ssize_t     write(const void* buffer, size_t bytes);
