@@ -80,7 +80,7 @@ PRODUCT_PACKAGES += \
     libnfc_jni \
     Nfc \
     Tag \
-    com.android.nfc_extras \
+    com.android.nfc_extras
 
 # Bluetooth
 PRODUCT_PACKAGES += \
