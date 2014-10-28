@@ -88,7 +88,7 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/htc/golfu/bluetooth
 
 # Wi-Fi
 BOARD_HAS_ATH_WLAN := true
-TARGET_CUSTOM_WIFI := ../../device/htc/golfu/libhardware_legacy/wifi/wifi.c
+#TARGET_CUSTOM_WIFI := ../../device/htc/golfu/libhardware_legacy/wifi/wifi.c
 BOARD_WLAN_DEVICE := ath6kl
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
