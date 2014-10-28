@@ -164,7 +164,7 @@ on boot
     write /proc/sys/vm/page-cluster 0
     
     # Start ADB before init.d so we can see errors 
-    #start adbd
+    start adbd
     
     # for modem link
     chown system system /sys/class/android_usb/f_modem/on
