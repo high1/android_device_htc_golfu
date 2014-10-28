@@ -19,10 +19,10 @@ WORKING :-
 - GPS
 - SD Card
 - NFC ( Only for NFC version of Desire C )
+- WIFI 
+- Camera 
+- Browser
 
 NOT WORKING :-
---------------
-
-- WIFI ( Disabled for now )
-- Camera ( Video recording not working )
-- Work on classic webview is in progress on another tree
+----------
+- Wifi tether
