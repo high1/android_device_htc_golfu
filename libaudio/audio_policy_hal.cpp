@@ -136,16 +136,17 @@ static audio_io_handle_t ap_get_output(struct audio_policy *pol,
                                        audio_stream_type_t stream,
                                        uint32_t sampling_rate,
                                        audio_format_t format,
-                                       uint32_t channels,
+                                       audio_channel_mask_t channelMask,
                                        audio_output_flags_t flags,
-                                       const audio_offload_info_t *offloadInfo)
+                                       const audio_offload_info_t *info)
 {
     struct qcom_audio_policy *qap = to_qap(pol);
 
     ALOGV("%s: tid %d", __func__, gettid());
     return qap->apm->getOutput((AudioSystem::stream_type)stream,
-                               sampling_rate, format, channels,
-                               (AudioSystem::output_flags)flags);
+                               sampling_rate, format, channelMask,
+                               (AudioSystem::output_flags)flags,
+                               info);
 }
 
 static int ap_start_output(struct audio_policy *pol, audio_io_handle_t output,
@@ -178,7 +179,7 @@ static audio_io_handle_t ap_get_input(struct audio_policy *pol, audio_source_t i
                                       audio_in_acoustics_t acoustics)
 {
     struct qcom_audio_policy *qap = to_qap(pol);
-    return qap->apm->getInput((int) inputSource, sampling_rate, format, channels,
+    return qap->apm->getInput(inputSource, sampling_rate, format, channels,
                               (AudioSystem::audio_in_acoustics)acoustics);
 }
 
@@ -322,8 +323,7 @@ static int ap_dump(const struct audio_policy *pol, int fd)
     return qap->apm->dump(fd);
 }
 
-static bool ap_is_offload_supported(const struct audio_policy *pol,
-                                    const audio_offload_info_t *info)
+static bool ap_is_offload_supported(const struct audio_policy *pol, const audio_offload_info_t *info)
 {
     const struct qcom_audio_policy *qap = to_cqap(pol);
     return qap->apm->isOffloadSupported(*info);
