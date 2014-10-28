@@ -98,14 +98,11 @@ WPA_SUPPLICANT_VERSION := VER_0_8_X
 HOSTAPD_VERSION := VER_0_8_X
 WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/ath6kl_sdio.ko"
 WIFI_DRIVER_MODULE_NAME := "ath6kl_sdio"
-WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 debug_mask=0x2413 firmware_path=/system/etc/firmware/ath6k/AR6003/hw2.1.1/bdata.bin2"
+WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 debug_mask=0xffffffff"
 WIFI_EXT_MODULE_PATH := "/system/lib/modules/cfg80211.ko"
 WIFI_EXT_MODULE_NAME := "cfg80211"
 WIFI_EXT_MODULE_ARG := ""
-WIFI_DRIVER_FW_PATH_AP := "/system/etc/firmware/ath6k/AR6003/hw2.1.1/bdata.bin2"
-WIFI_DRIVER_FW_PATH_STA := "/system/etc/firmware/ath6k/AR6003/hw2.1.1/bdata.bin2"
-WIFI_DRIVER_FW_PATH_P2P := "/system/etc/firmware/ath6k/AR6003/hw2.1.1/bdata.bin2"
-WIFI_DRIVER_FW_PATH_PARAM := "/sys/module/ath6kl_sdio/parameters/firmware_path"
+
 # Video
 TARGET_QCOM_LEGACY_OMX := true 
 TARGET_QCOM_MEDIA_VARIANT := caf
