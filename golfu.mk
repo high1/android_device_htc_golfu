@@ -278,7 +278,11 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/bin/zimmer:system/bin/zimmer \
     device/htc/golfu/proprietary/bin/ath6kl-fwlog-record:system/bin/ath6kl-fwlog-record \
     device/htc/golfu/proprietary/bin/athtestcmd:system/bin/athtestcmd \
-    device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem 
+    device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem
+
+# Set max background services
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.config.max_starting_bg=6    
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.com.android.mobiledata=false \
