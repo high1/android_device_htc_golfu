@@ -35,7 +35,6 @@ ro.opengles.version=131072
 ro.sf.lcd_density=160
 debug.gr.numframebuffers=3
 ro.bq.gpu_to_cpu_unsupported=1
-debug.hwc.fakevsync=1
 
 # Video Acceleration
 video.accelerate.hw=1
