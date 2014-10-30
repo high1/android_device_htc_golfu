@@ -280,6 +280,9 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/bin/athtestcmd:system/bin/athtestcmd \
     device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem 
 
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.com.android.mobiledata=false \
+    ro.com.android.dataroaming=false
 	
 ADDITIONAL_DEFAULT_PROPERTIES += \
     ro.adb.secure=0 \
