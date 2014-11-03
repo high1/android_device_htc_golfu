@@ -88,6 +88,12 @@ PRODUCT_PACKAGES += \
 #Wifi
 #PRODUCT_PACKAGES += \
 #    libnetcmdiface
+
+# FM Radio
+PRODUCT_PACKAGES += \
+    FM2 \
+    libqcomfm_jni \
+    qcom.fmradio
     
 # Misc
 PRODUCT_PACKAGES += \
@@ -192,7 +198,7 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/AudioFilter_HP.csv:system/etc/AudioFilter_HP.csv \
     device/htc/golfu/proprietary/lib/libaudioeq.so:system/lib/libaudioeq.so \
     device/htc/golfu/proprietary/lib/libhtc_acoustic.so:system/lib/libhtc_acoustic.so \
-    device/htc/pico/prebuilt/etc/AutoVolumeControl.txt:system/etc/AutoVolumeControl.txt
+    device/htc/golfu/proprietary/etc/AutoVolumeControl.txt:system/etc/AutoVolumeControl.txt
 
 # Sensors
 PRODUCT_COPY_FILES += \
