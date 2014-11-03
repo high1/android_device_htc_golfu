@@ -29,10 +29,6 @@ on post-fs-data
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
     
-    # Dummy file, to keep the API happy. The default firmware does both modes
-    write /data/misc/wifi/fwpath ""
-    chmod 0666 /data/misc/wifi/fwpath
-    
     mkdir /data/radio 0770 radio radio
     chmod 2770 /data/radio
     mkdir /dev/radio 0770 radio radio
@@ -196,13 +192,13 @@ on boot
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
     
-service rmt_storage /system/bin/rmt_storage
-    class core
-    user root
-    disabled
+#service rmt_storage /system/bin/rmt_storage
+#    class core
+#    user root
+#    disabled
 
-on property:ro.boot.emmc=true
-    start rmt_storage
+#on property:ro.boot.emmc=true
+#    start rmt_storage
 
 #service netmgrd /system/bin/netmgrd
 #    class late_start
@@ -222,20 +218,20 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     disabled
     oneshot
 
-#service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
-#    class late_start
-#    socket hostapd_wlan0 dgram 660 root wifi
-#    user root
-#    group wifi
-#    oneshot
-#    disabled
-
 service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
     class late_start
+#    socket hostapd_wlan0 dgram 660 root wifi
     user root
-    group root
+    group wifi
     oneshot
     disabled
+
+#service hostapd /system/bin/hostapd -dddd /data/misc/wifi/hostapd.conf
+#    class late_start
+#    user root
+#    group root
+#    oneshot
+#    disabled
 
 service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
     class late_start
