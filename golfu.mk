@@ -47,7 +47,6 @@ PRODUCT_PACKAGES += \
     audio.usb.default \
     libaudioutils \
     libaudio-resampler
-    #audio_policy.conf \
 
  # GPS
 PRODUCT_PACKAGES += \
@@ -85,12 +84,15 @@ PRODUCT_PACKAGES += \
 # Bluetooth
 PRODUCT_PACKAGES += \
     btmac
+
+#Wifi
+#PRODUCT_PACKAGES += \
+#    libnetcmdiface
     
 # Misc
 PRODUCT_PACKAGES += \
     com.android.future.usb.accessory \
     dexpreopt \
-    libnetcmdiface \
     librpc
     
 # Ramdisk
@@ -123,6 +125,7 @@ PRODUCT_COPY_FILES += \
     frameworks/base/nfc-extras/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml
+    #frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
     
 # Camera
 PRODUCT_COPY_FILES += \
@@ -176,6 +179,7 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/firmware/ath6k/AR6003/hw2.1.1/utf.bin:system/etc/firmware/ath6k/AR6003/hw2.1.1/utf.bin \
     device/htc/golfu/proprietary/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
     device/htc/golfu/proprietary/etc/wifi/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf
+    #device/htc/golfu/proprietary/etc/wifi/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
 # Audio
 PRODUCT_COPY_FILES += \
@@ -187,11 +191,12 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/AudioPreProcess.csv:system/etc/AudioPreProcess.csv \
     device/htc/golfu/proprietary/etc/AudioFilter_HP.csv:system/etc/AudioFilter_HP.csv \
     device/htc/golfu/proprietary/lib/libaudioeq.so:system/lib/libaudioeq.so \
-    device/htc/golfu/proprietary/lib/libhtc_acoustic.so:system/lib/libhtc_acoustic.so
+    device/htc/golfu/proprietary/lib/libhtc_acoustic.so:system/lib/libhtc_acoustic.so \
+    device/htc/pico/prebuilt/etc/AutoVolumeControl.txt:system/etc/AutoVolumeControl.txt
 
 # Sensors
 PRODUCT_COPY_FILES += \
-    device/htc/golfu/proprietary/lib/hw/sensors.golfu.so:system/lib/hw/sensors.golfu.so \
+    device/htc/golfu/proprietary/lib/hw/sensors.golfu.so:system/lib/hw/sensors.golfu.so
 
 # 3D
 PRODUCT_COPY_FILES += \
