@@ -139,7 +139,6 @@ on boot
     write /proc/sys/net/ipv6/conf/rmnet_sdio6/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet_sdio7/accept_ra 2
 
-<<<<<<< HEAD:ramdisk/init.golfu.rc
     # Widevine DRM
     chown drm system /dev/htcdrm
     chmod 0660 /dev/htcdrm
