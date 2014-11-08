@@ -5,11 +5,15 @@ on early-init
 
 on init
     mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
+    mkdir /mnt/media_rw/usbdisk0 0700 media_rw media_rw
     mkdir /storage/sdcard0 0700 root root
+    mkdir /storage/usbdisk0 0700 root root
     export EXTERNAL_STORAGE /storage/sdcard0
     # for backwards compatibility
     symlink /storage/sdcard0 /sdcard
     symlink /storage/sdcard0 /mnt/sdcard
+    symlink /storage/usbdisk0 /mnt/usbdisk
+    symlink /storage/usbdisk0 /usbdisk
 
 on fs
     # mount mmc partitions
