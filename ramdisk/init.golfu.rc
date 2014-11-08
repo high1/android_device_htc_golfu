@@ -191,13 +191,13 @@ on boot
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
     
-#service rmt_storage /system/bin/rmt_storage
-#    class core
-#    user root
-#    disabled
+service rmt_storage /system/bin/rmt_storage
+    class core
+    user root
+    disabled
 
-#on property:ro.boot.emmc=true
-#    start rmt_storage
+on property:ro.boot.emmc=true
+    start rmt_storage
 
 #service netmgrd /system/bin/netmgrd
 #    class late_start
