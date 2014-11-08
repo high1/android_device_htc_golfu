@@ -302,3 +302,7 @@ service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
 service fuse_sdcard0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/sdcard0 /storage/sdcard0
     class late_start
     disabled
+    
+service fuse_usbdisk0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/usbdisk0 /storage/usbdisk0
+    class late_start
+    disabled
