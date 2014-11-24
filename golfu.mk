@@ -70,8 +70,8 @@ PRODUCT_PACKAGES += \
    
 # Camera
 PRODUCT_PACKAGES += \
-    camera.msm7x27a \
     libsurfaceflinger_client
+    #camera.msm7x27a \
      
 # NFC
 PRODUCT_PACKAGES += \
@@ -128,7 +128,7 @@ PRODUCT_COPY_FILES += \
     
 # Camera
 PRODUCT_COPY_FILES += \
-    device/htc/golfu/proprietary/lib/hw/camera.vendor.msm7x27a.so:system/lib/hw/camera.vendor.msm7x27a.so \
+    device/htc/golfu/proprietary/lib/hw/camera.msm7x27a.so:system/lib/hw/camera.msm7x27a.so \
     device/htc/golfu/proprietary/lib/liboemcamera.so:system/lib/liboemcamera.so \
     device/htc/golfu/proprietary/lib/libmmipl.so:system/lib/libmmipl.so \
     device/htc/golfu/proprietary/lib/libmmjpeg.so:system/lib/libmmjpeg.so \

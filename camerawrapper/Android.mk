@@ -1,3 +1,4 @@
+ifneq ($(TARGET_BOOTLOADER_BOARD_NAME),golfu)
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
@@ -13,3 +14,4 @@ LOCAL_MODULE := camera.msm7x27a
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
+endif # TARGET_BOOTLOADER_BOARD_NAME
