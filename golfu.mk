@@ -203,17 +203,24 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/firmware/yamato_pm4.fw:system/etc/firmware/yamato_pm4.fw \
     device/htc/golfu/proprietary/etc/firmware/leia_pfp_470.fw:system/etc/firmware/leia_pfp_470.fw \
     device/htc/golfu/proprietary/etc/firmware/leia_pm4_470.fw:system/etc/firmware/leia_pm4_470.fw \
-    device/htc/golfu/proprietary/lib/libgsl.so:system/lib/libgsl.so \
-    device/htc/golfu/proprietary/lib/libOpenVG.so:system/lib/libOpenVG.so \
-    device/htc/golfu/proprietary/lib/libsc-a2xx.so:system/lib/libsc-a2xx.so \
-    device/htc/golfu/proprietary/lib/libC2D2.so:system/lib/libC2D2.so \
-    device/htc/golfu/proprietary/lib/libc2d2_z180.so:system/lib/libc2d2_z180.so \
-    device/htc/golfu/proprietary/lib/egl/libGLESv2S3D_adreno200.so:system/lib/egl/libGLESv2S3D_adreno200.so \
-    device/htc/golfu/proprietary/lib/egl/eglsubAndroid.so:system/lib/egl/eglsubAndroid.so \
-    device/htc/golfu/proprietary/lib/egl/libEGL_adreno200.so:system/lib/egl/libEGL_adreno200.so \
-    device/htc/golfu/proprietary/lib/egl/libGLESv1_CM_adreno200.so:system/lib/egl/libGLESv1_CM_adreno200.so \
-    device/htc/golfu/proprietary/lib/egl/libGLESv2_adreno200.so:system/lib/egl/libGLESv2_adreno200.so \
-    device/htc/golfu/proprietary/lib/egl/libq3dtools_adreno200.so:system/lib/egl/libq3dtools_adreno200.so
+    vendor/htc/pico/proprietary/etc/firmware/yamato_pfp.fw:system/etc/firmware/yamato_pfp.fw \
+    vendor/htc/pico/proprietary/etc/firmware/yamato_pm4.fw:system/etc/firmware/yamato_pm4.fw \
+    device/htc/pico/prebuilt/etc/firmware/leia_pfp_470.fw:system/etc/firmware/leia_pfp_470.fw \
+    device/htc/pico/prebuilt/etc/firmware/leia_pm4_470.fw:system/etc/firmware/leia_pm4_470.fw \
+    vendor/htc/pico/proprietary/lib/libgsl.so:system/vendor/lib/libgsl.so \
+    vendor/htc/pico/proprietary/lib/libOpenCL.so:system/vendor/lib/libOpenCL.so \
+    vendor/htc/pico/proprietary/lib/libOpenVG.so:system/vendor/lib/libOpenVG.so \
+    vendor/htc/pico/proprietary/lib/libsc-a2xx.so:system/vendor/lib/libsc-a2xx.so \
+    vendor/htc/pico/proprietary/lib/libC2D2.so:system/vendor/lib/libC2D2.so \
+    vendor/htc/pico/proprietary/lib/libc2d2_z180.so:system/vendor/lib/libc2d2_z180.so \
+    vendor/htc/pico/proprietary/lib/libCB.so:system/vendor/lib/libCB.so \
+    vendor/htc/pico/proprietary/lib/libadreno_utils.so:system/vendor/lib/libadreno_utils.so \
+    vendor/htc/pico/proprietary/lib/egl/eglsubAndroid.so:system/vendor/lib/egl/eglsubAndroid.so \
+    vendor/htc/pico/proprietary/lib/egl/libEGL_adreno.so:system/vendor/lib/egl/libEGL_adreno.so \
+    vendor/htc/pico/proprietary/lib/egl/libGLESv1_CM_adreno.so:system/vendor/lib/egl/libGLESv1_CM_adreno.so \
+    vendor/htc/pico/proprietary/lib/egl/libGLESv2_adreno.so:system/vendor/lib/egl/libGLESv2_adreno.so \
+    vendor/htc/pico/proprietary/lib/egl/libGLESv2S3D_adreno.so:system/vendor/lib/egl/libGLESv2S3D_adreno.so \
+    vendor/htc/pico/proprietary/lib/egl/libq3dtools_adreno.so:system/vendor/lib/egl/libq3dtools_adreno.so
 
 # RIL
 PRODUCT_COPY_FILES += \
