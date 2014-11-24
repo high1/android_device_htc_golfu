@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-USE_CAMERA_STUB := true
 BOARD_VENDOR := htc
 
 # Platform
@@ -67,18 +65,10 @@ BOARD_USES_LEGACY_ALSA_AUDIO := true
 # Override healthd HAL
 BOARD_HAL_STATIC_LIBRARIES := libhealthd.msm7x27a
 
-# SDcard support
-#BOARD_SDCARD_INTERNAL_DEVICE := /dev/block/mmcblk0p32
-
 # UMS
 BOARD_USE_USB_MASS_STORAGE_SWITCH := true
 TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/msm_otg/msm_hsusb/gadget/lun0/file"
 BOARD_UMS_LUNFILE := "/sys/devices/platform/msm_otg/msm_hsusb/gadget/lun0/file"
-
-# Vold
-#BOARD_VOLD_MAX_PARTITIONS := 32
-#BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
-#BOARD_VOLD_DISC_HAS_MULTIPLE_MAJORS := true
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
@@ -93,8 +83,8 @@ BOARD_HOSTAPD_DRIVER := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
 WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/ath6kl_sdio.ko"
 WIFI_DRIVER_MODULE_NAME := "ath6kl_sdio"
-WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
-WIFI_DRIVER_MODULE_AP_ARG := "suspend_mode=3 wow_mode=2 ath6kl_p2p=1 recovery_enable=1"
+WIFI_DRIVER_MODULE_ARG := "suspend_mode=3 wow_mode=2 recovery_enable=1"
+WIFI_DRIVER_MODULE_AP_ARG := "suspend_mode=3 wow_mode=2 recovery_enable=1"
 WIFI_EXT_MODULE_PATH := "/system/lib/modules/cfg80211.ko"
 WIFI_EXT_MODULE_NAME := "cfg80211"
 
@@ -168,17 +158,10 @@ BOARD_HAS_NO_SELECT_BUTTON := true
 # TWRP
 TARGET_RECOVERY_INITRC := device/htc/golfu/recovery/init-twrp.rc
 DEVICE_RESOLUTION := 320x480
-TW_INTERNAL_STORAGE_PATH := "/emmc"
-TW_INTERNAL_STORAGE_MOUNT_POINT := "emmc"
-TW_EXTERNAL_STORAGE_PATH := "/sdcard"
-TW_EXTERNAL_STORAGE_MOUNT_POINT := "sdcard"
-TW_DEFAULT_EXTERNAL_STORAGE := true
 TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
-#TW_NO_REBOOT_BOOTLOADER := true
 TW_BRIGHTNESS_PATH := /sys/devices/platform/msm_fb.590849/leds/lcd-backlight/brightness
 TW_MAX_BRIGHTNESS := 255
 RECOVERY_GRAPHICS_USE_LINELENGTH := true
-BOARD_USE_CUSTOM_RECOVERY_FONT:= \"font_7x16.h\"
 
 # Partition sizes
 TARGET_USERIMAGES_USE_EXT4 := true

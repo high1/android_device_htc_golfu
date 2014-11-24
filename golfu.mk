@@ -26,8 +26,8 @@ DEVICE_PACKAGE_OVERLAYS += device/htc/golfu/overlay
 # Video decoding
 PRODUCT_PACKAGES += \
     libstagefrighthw \
-    libOmxCore \
-    libdashplayer
+    libOmxCore
+    #libdashplayer
     
 # Graphics 
 PRODUCT_PACKAGES += \
@@ -125,7 +125,6 @@ PRODUCT_COPY_FILES += \
     frameworks/base/nfc-extras/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml
-    #frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
     
 # Camera
 PRODUCT_COPY_FILES += \
@@ -179,7 +178,6 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/firmware/ath6k/AR6003/hw2.1.1/utf.bin:system/etc/firmware/ath6k/AR6003/hw2.1.1/utf.bin \
     device/htc/golfu/proprietary/etc/wifi/wpa_supplicant.conf:system/etc/wifi/wpa_supplicant.conf \
     device/htc/golfu/proprietary/etc/wifi/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf
-    #device/htc/golfu/proprietary/etc/wifi/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
 # Audio
 PRODUCT_COPY_FILES += \
@@ -218,10 +216,11 @@ PRODUCT_COPY_FILES += \
 
 # RIL
 PRODUCT_COPY_FILES += \
+    device/htc/golfu/proprietary/bin/rmt_storage:system/bin/rmt_storage \
+    device/htc/golfu/proprietary/bin/qmuxd:system/bin/qmuxd \
     device/htc/golfu/proprietary/lib/libhtc_ril.so:system/lib/libhtc_ril.so \
-    device/htc/golfu/proprietary/lib/libqc-opt.so:system/lib/libqc-opt.so \
-    device/htc/golfu/proprietary/bin/qmuxd:system/bin/qmuxd
-
+    device/htc/golfu/proprietary/lib/libqc-opt.so:system/lib/libqc-opt.so
+    
 #Lib for qmuxd
 PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/libdiag.so:system/lib/libdiag.so \
@@ -239,7 +238,7 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/liboncrpc.so:obj/lib/liboncrpc.so \
     device/htc/golfu/proprietary/lib/libnv.so:obj/lib/libnv.so
 
-# NFC firmware
+# NFC
 PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/hw/nfc.golfu.so:system/lib/hw/nfc.golfu.so \
     device/htc/golfu/proprietary/lib/libpn544_fw.so:system/vendor/firmware/libpn544_fw.so
@@ -260,30 +259,29 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/usr/keylayout/h2w_headset.kl:system/usr/keylayout/h2w_headset.kl \
     device/htc/golfu/proprietary/usr/keylayout/synaptics-rmi-touchscreen.kl:system/usr/keylayout/synaptics-rmi-touchscreen.kl \
     device/htc/golfu/proprietary/usr/keylayout/himax-touchscreen.kl:system/usr/keylayout/himax-touchscreen.kl \
-    device/htc/golfu/proprietary/usr/keylayout/AVRCP.kl:system/usr/keylayout/AVRCP.kl \
     device/htc/golfu/proprietary/usr/icu/icudt46l.dat:system/usr/icu/icudt46l.dat \
     device/htc/golfu/proprietary/usr/idc/synaptics-rmi-touchscreen.idc:system/usr/idc/synaptics-rmi-touchscreen.idc \
     device/htc/golfu/proprietary/usr/idc/himax-touchscreen.idc:system/usr/idc/himax-touchscreen.idc
+    #device/htc/golfu/proprietary/usr/keylayout/AVRCP.kl:system/usr/keylayout/AVRCP.kl 
 
 # Proprietary Binaries
 PRODUCT_COPY_FILES += \
-    device/htc/golfu/proprietary/etc/bluetooth/main.conf:system/etc/bluetooth/main.conf \
     device/htc/golfu/proprietary/etc/init.qcom.bt.sh:system/etc/init.qcom.bt.sh \
     device/htc/golfu/proprietary/etc/init.qcom.fm.sh:system/etc/init.qcom.fm.sh \
     device/htc/golfu/proprietary/etc/init.qcom.post_boot.sh:system/etc/init.qcom.post_boot.sh \
-    device/htc/golfu/proprietary/bin/fm_qsoc_patches:system/bin/fm_qsoc_patches \
-    device/htc/golfu/proprietary/bin/udhcpd:system/bin/udhcpd \
-    device/htc/golfu/proprietary/bin/clockd:system/bin/clockd \
-    device/htc/golfu/proprietary/bin/hci_qcomm_init:system/bin/hci_qcomm_init \
-    device/htc/golfu/proprietary/bin/hciattach:system/bin/hciattach \
-    device/htc/golfu/proprietary/bin/netsharing:system/bin/netsharing \
-    device/htc/golfu/proprietary/bin/rmt_storage:system/bin/rmt_storage \
-    device/htc/golfu/proprietary/bin/zcb:system/bin/zcb \
-    device/htc/golfu/proprietary/bin/zchgd:system/bin/zchgd \
-    device/htc/golfu/proprietary/bin/zimmer:system/bin/zimmer \
-    device/htc/golfu/proprietary/bin/ath6kl-fwlog-record:system/bin/ath6kl-fwlog-record \
-    device/htc/golfu/proprietary/bin/athtestcmd:system/bin/athtestcmd \
-    device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem
+    device/htc/golfu/proprietary/bin/fm_qsoc_patches:system/bin/fm_qsoc_patches 
+    #device/htc/golfu/proprietary/bin/udhcpd:system/bin/udhcpd \
+    #device/htc/golfu/proprietary/bin/clockd:system/bin/clockd \
+    #device/htc/golfu/proprietary/bin/hci_qcomm_init:system/bin/hci_qcomm_init \
+    #device/htc/golfu/proprietary/bin/hciattach:system/bin/hciattach \
+    #device/htc/golfu/proprietary/bin/netsharing:system/bin/netsharing \
+    #device/htc/golfu/proprietary/bin/zcb:system/bin/zcb \
+    #device/htc/golfu/proprietary/bin/zchgd:system/bin/zchgd \
+    #device/htc/golfu/proprietary/bin/zimmer:system/bin/zimmer \
+    #device/htc/golfu/proprietary/bin/ath6kl-fwlog-record:system/bin/ath6kl-fwlog-record \
+    #device/htc/golfu/proprietary/bin/athtestcmd:system/bin/athtestcmd \
+    #device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem
+    #device/htc/golfu/proprietary/etc/bluetooth/main.conf:system/etc/bluetooth/main.conf \
 
 # Reduce background apps limit to 12 on low-tier devices
 PRODUCT_PROPERTY_OVERRIDES += \
