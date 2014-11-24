@@ -34,10 +34,11 @@ PRODUCT_PACKAGES += \
     copybit.msm7x27a \
     gralloc.msm7x27a \
     hwcomposer.msm7x27a \
-    libtilerenderer
-    #libgenlock \
-    #liboverlay 
-    #libqdMetaData
+    memtrack.msm7x27a \
+    libgenlock \
+    liboverlay \
+    libtilerenderer \
+    libqdMetaData
 
 # Audio
 PRODUCT_PACKAGES += \
@@ -85,9 +86,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     btmac
 
-#Wifi
-#PRODUCT_PACKAGES += \
-#    libnetcmdiface
+Wifi
+PRODUCT_PACKAGES += \
+    libnetcmdiface
     
 # Misc
 PRODUCT_PACKAGES += \
