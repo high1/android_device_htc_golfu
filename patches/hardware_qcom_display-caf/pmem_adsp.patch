@@ -1,0 +1,394 @@
+From 3449e11e3aa566a8fbd27cf6e2102ac77bfb9c72 Mon Sep 17 00:00:00 2001
+From: Rudolf Tammekivi <rtammekivi@gmail.com>
+Date: Mon, 18 Nov 2013 19:13:52 +0200
+Subject: [PATCH 1/2] gralloc: Allow legacy devices to use PMEM for ADSP
+ (camera).
+
+Partially bring back PMEM support for legacy devices having proprietary camera
+libraries stuck in PMEM. This change allows these devices to continue using
+PMEM for the camera, and ION for everything else.
+
+Change-Id: I1afbc7d137b3d49b2ab3e53917b16fd920ea140b
+---
+ libgralloc/Android.mk           |   4 ++
+ libgralloc/alloc_controller.cpp |  20 ++++++
+ libgralloc/alloc_controller.h   |   6 ++
+ libgralloc/pmemalloc.cpp        | 156 ++++++++++++++++++++++++++++++++++++++++
+ libgralloc/pmemalloc.h          |  58 +++++++++++++++
+ 5 files changed, 244 insertions(+)
+ create mode 100644 libgralloc/pmemalloc.cpp
+ create mode 100644 libgralloc/pmemalloc.h
+
+diff --git a/libgralloc/Android.mk b/libgralloc/Android.mk
+index 40e5827..5b3c297 100644
+--- a/libgralloc/Android.mk
++++ b/libgralloc/Android.mk
+@@ -49,5 +49,9 @@ LOCAL_SHARED_LIBRARIES        := $(common_libs) libqdutils libdl
+ LOCAL_CFLAGS                  := $(common_flags) $(libmemalloc-def) -DLOG_TAG=\"qdmemalloc\"
+ LOCAL_ADDITIONAL_DEPENDENCIES := $(common_deps) $(kernel_deps)
+ LOCAL_SRC_FILES               := ionalloc.cpp alloc_controller.cpp
++ifeq ($(BOARD_USES_PMEM_ADSP),true)
++    LOCAL_SRC_FILES           += pmemalloc.cpp
++    LOCAL_CFLAGS              += -DUSE_PMEM_ADSP
++endif
+ 
+ include $(BUILD_SHARED_LIBRARY)
+diff --git a/libgralloc/alloc_controller.cpp b/libgralloc/alloc_controller.cpp
+index 46f6f9b..0ca5e72 100644
+--- a/libgralloc/alloc_controller.cpp
++++ b/libgralloc/alloc_controller.cpp
+@@ -34,6 +34,9 @@
+ #include "alloc_controller.h"
+ #include "memalloc.h"
+ #include "ionalloc.h"
++#ifdef USE_PMEM_ADSP
++#include "pmemalloc.h"
++#endif
+ #include "gr.h"
+ #include "comptype.h"
+ 
+@@ -180,6 +183,9 @@ IAllocController* IAllocController::getInstance(void)
+ IonController::IonController()
+ {
+     mIonAlloc = new IonAlloc();
++#ifdef USE_PMEM_ADSP
++    mPmemAlloc = new PmemAdspAlloc();
++#endif
+     mUseTZProtection = false;
+     char property[PROPERTY_VALUE_MAX];
+     if ((property_get("persist.gralloc.cp.level3", property, NULL) <= 0) ||
+@@ -197,6 +203,14 @@ int IonController::allocate(alloc_data& data, int usage)
+     data.uncached = useUncached(usage);
+     data.allocType = 0;
+ 
++#ifdef USE_PMEM_ADSP
++    if (usage & GRALLOC_USAGE_PRIVATE_ADSP_HEAP) {
++        data.allocType |= private_handle_t::PRIV_FLAGS_USES_PMEM_ADSP;
++        ret = mPmemAlloc->alloc_buffer(data);
++        return ret;
++    }
++#endif
++
+     if(usage & GRALLOC_USAGE_PRIVATE_UI_CONTIG_HEAP)
+         ionFlags |= ION_HEAP(ION_SF_HEAP_ID);
+ 
+@@ -240,8 +254,10 @@ int IonController::allocate(alloc_data& data, int usage)
+     if(usage & GRALLOC_USAGE_PRIVATE_CAMERA_HEAP)
+         ionFlags |= ION_HEAP(ION_CAMERA_HEAP_ID);
+ 
++#ifndef USE_PMEM_ADSP
+     if(usage & GRALLOC_USAGE_PRIVATE_ADSP_HEAP)
+         ionFlags |= ION_HEAP(ION_ADSP_HEAP_ID);
++#endif
+ 
+ #ifdef SECURE_MM_HEAP
+     if(ionFlags & ION_SECURE)
+@@ -291,6 +307,10 @@ IMemAlloc* IonController::getAllocator(int flags)
+     IMemAlloc* memalloc = NULL;
+     if (flags & private_handle_t::PRIV_FLAGS_USES_ION) {
+         memalloc = mIonAlloc;
++#ifdef USE_PMEM_ADSP
++    } else if (flags & private_handle_t::PRIV_FLAGS_USES_PMEM_ADSP) {
++        memalloc = mPmemAlloc;
++#endif
+     } else {
+         ALOGE("%s: Invalid flags passed: 0x%x", __FUNCTION__, flags);
+     }
+diff --git a/libgralloc/alloc_controller.h b/libgralloc/alloc_controller.h
+index 8954d39..b7b85c7 100644
+--- a/libgralloc/alloc_controller.h
++++ b/libgralloc/alloc_controller.h
+@@ -34,6 +34,9 @@ namespace gralloc {
+ struct alloc_data;
+ class IMemAlloc;
+ class IonAlloc;
++#ifdef USE_PMEM_ADSP
++class PmemAdspAlloc;
++#endif
+ 
+ class IAllocController {
+ 
+@@ -65,6 +68,9 @@ class IonController : public IAllocController {
+ 
+     private:
+     IonAlloc* mIonAlloc;
++#ifdef USE_PMEM_ADSP
++    PmemAdspAlloc* mPmemAlloc;
++#endif
+     bool mUseTZProtection;
+ 
+ };
+diff --git a/libgralloc/pmemalloc.cpp b/libgralloc/pmemalloc.cpp
+new file mode 100644
+index 0000000..a8c62fd
+--- /dev/null
++++ b/libgralloc/pmemalloc.cpp
+@@ -0,0 +1,156 @@
++/*
++ * Copyright (c) 2011-2012, Code Aurora Forum. All rights reserved.
++
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are
++ * met:
++ *   * Redistributions of source code must retain the above copyright
++ *     notice, this list of conditions and the following disclaimer.
++ *   * Redistributions in binary form must reproduce the above
++ *     copyright notice, this list of conditions and the following
++ *     disclaimer in the documentation and/or other materials provided
++ *     with the distribution.
++ *   * Neither the name of Code Aurora Forum, Inc. nor the names of its
++ *     contributors may be used to endorse or promote products derived
++ *     from this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
++ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
++ * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
++ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
++ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++#include <unistd.h>
++#include <fcntl.h>
++#include <sys/mman.h>
++#include <stdlib.h>
++#include <cutils/log.h>
++#include <errno.h>
++#include <linux/android_pmem.h>
++#include "gralloc_priv.h"
++#include "pmemalloc.h"
++
++using namespace gralloc;
++
++#define PMEM_ADSP_DEVICE "/dev/pmem_adsp"
++
++// Common functions between userspace
++// and kernel allocators
++static int getOpenFlags(bool uncached)
++{
++    if(uncached)
++        return O_RDWR | O_SYNC;
++    else
++        return O_RDWR;
++}
++
++static int alignPmem(int fd, size_t size, int align) {
++    struct pmem_allocation allocation;
++    allocation.size = size;
++    allocation.align = align;
++    if (ioctl(fd, PMEM_ALLOCATE_ALIGNED, &allocation))
++        return -errno;
++    return 0;
++}
++
++static int cleanPmem(void *base, size_t size, int offset, int fd) {
++    struct pmem_addr pmem_addr;
++    pmem_addr.vaddr = (unsigned long) base;
++    pmem_addr.offset = offset;
++    pmem_addr.length = size;
++    if (ioctl(fd, PMEM_CLEAN_INV_CACHES, &pmem_addr))
++        return -errno;
++    return 0;
++}
++
++//-------------- PmemAdspAlloc-----------------------//
++
++int PmemAdspAlloc::alloc_buffer(alloc_data& data)
++{
++    int err, offset = 0;
++    int openFlags = getOpenFlags(data.uncached);
++    int size = data.size;
++
++    int fd = open(PMEM_ADSP_DEVICE, openFlags, 0);
++    if (fd < 0) {
++        err = -errno;
++        ALOGE("%s: Error opening %s", __FUNCTION__, PMEM_ADSP_DEVICE);
++        return err;
++    }
++
++    if (data.align == 8192) {
++        // Tile format buffers need physical alignment to 8K
++        // Default page size does not need this ioctl
++        err = alignPmem(fd, size, 8192);
++        if (err < 0) {
++            ALOGE("alignPmem failed");
++        }
++    }
++    void* base = mmap(0, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
++    if (base == MAP_FAILED) {
++        err = -errno;
++        ALOGE("%s: failed to map pmem fd: %s", PMEM_ADSP_DEVICE,
++              strerror(errno));
++        close(fd);
++        return err;
++    }
++    memset(base, 0, size);
++    clean_buffer((void*)((intptr_t) base + offset), size, offset, fd, 0);
++    data.base = base;
++    data.offset = 0;
++    data.fd = fd;
++    ALOGV("%s: Allocated buffer base:%p size:%d fd:%d",
++          PMEM_ADSP_DEVICE, base, size, fd);
++    return 0;
++
++}
++
++int PmemAdspAlloc::free_buffer(void* base, size_t size, int offset, int fd)
++{
++    ALOGV("%s: Freeing buffer base:%p size:%d fd:%d",
++          PMEM_ADSP_DEVICE, base, size, fd);
++
++    int err =  unmap_buffer(base, size, offset);
++    close(fd);
++    return err;
++}
++
++int PmemAdspAlloc::map_buffer(void **pBase, size_t size, int offset, int fd)
++{
++    int err = 0;
++    void *base = mmap(0, size, PROT_READ| PROT_WRITE,
++                      MAP_SHARED, fd, 0);
++    *pBase = base;
++    if(base == MAP_FAILED) {
++        err = -errno;
++        ALOGE("%s: Failed to map memory in the client: %s",
++              PMEM_ADSP_DEVICE, strerror(errno));
++    } else {
++        ALOGV("%s: Mapped buffer base:%p size:%d, fd:%d",
++              PMEM_ADSP_DEVICE, base, size, fd);
++    }
++    return err;
++
++}
++
++int PmemAdspAlloc::unmap_buffer(void *base, size_t size, int offset)
++{
++    int err = 0;
++    if (munmap(base, size)) {
++        err = -errno;
++        ALOGW("%s: Error unmapping memory at %p: %s",
++              PMEM_ADSP_DEVICE, base, strerror(err));
++    }
++    return err;
++
++}
++int PmemAdspAlloc::clean_buffer(void *base, size_t size, int offset, int fd, int op)
++{
++    return cleanPmem(base, size, offset, fd);
++}
+diff --git a/libgralloc/pmemalloc.h b/libgralloc/pmemalloc.h
+new file mode 100644
+index 0000000..2f64752
+--- /dev/null
++++ b/libgralloc/pmemalloc.h
+@@ -0,0 +1,58 @@
++/*
++ * Copyright (c) 2011-2012, Code Aurora Forum. All rights reserved.
++
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are
++ * met:
++ *   * Redistributions of source code must retain the above copyright
++ *     notice, this list of conditions and the following disclaimer.
++ *   * Redistributions in binary form must reproduce the above
++ *     copyright notice, this list of conditions and the following
++ *     disclaimer in the documentation and/or other materials provided
++ *     with the distribution.
++ *   * Neither the name of Code Aurora Forum, Inc. nor the names of its
++ *     contributors may be used to endorse or promote products derived
++ *     from this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
++ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
++ * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
++ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
++ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
++ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef GRALLOC_PMEMALLOC_H
++#define GRALLOC_PMEMALLOC_H
++
++#include "memalloc.h"
++#include "gr.h"
++
++namespace gralloc {
++
++class PmemAdspAlloc : public IMemAlloc  {
++
++    public:
++    virtual int alloc_buffer(alloc_data& data);
++
++    virtual int free_buffer(void *base, size_t size,
++                            int offset, int fd);
++
++    virtual int map_buffer(void **pBase, size_t size,
++                           int offset, int fd);
++
++    virtual int unmap_buffer(void *base, size_t size,
++                             int offset);
++
++    virtual int clean_buffer(void*base, size_t size,
++                             int offset, int fd, int op);
++};
++
++}
++
++#endif /* GRALLOC_PMEMALLOC_H */
+-- 
+1.9.1
+
+
+From 49899e2bf26f26d294fb84031a77fd6474d78961 Mon Sep 17 00:00:00 2001
+From: Paul Bouman <boumanpaul@gmail.com>
+Date: Sun, 15 Dec 2013 10:44:04 +0100
+Subject: [PATCH 2/2] gralloc: our prebuilt camera lib needs the ADSP heap to
+ be first
+
+---
+ libgralloc/gralloc_priv.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/libgralloc/gralloc_priv.h b/libgralloc/gralloc_priv.h
+index c57cb42..e523663 100644
+--- a/libgralloc/gralloc_priv.h
++++ b/libgralloc/gralloc_priv.h
+@@ -37,18 +37,18 @@ enum {
+     /* gralloc usage bits indicating the type
+      * of allocation that should be used */
+ 
+-    /* SYSTEM heap comes from kernel vmalloc,
+-     * can never be uncached, is not secured*/
+-    GRALLOC_USAGE_PRIVATE_SYSTEM_HEAP     =       GRALLOC_USAGE_PRIVATE_0,
++    /* ADSP heap is a carveout heap, is not secured*/
++    GRALLOC_USAGE_PRIVATE_ADSP_HEAP       =       GRALLOC_USAGE_PRIVATE_0,
+     /* SF heap is used for application buffers, is not secured */
+     GRALLOC_USAGE_PRIVATE_UI_CONTIG_HEAP  =       GRALLOC_USAGE_PRIVATE_1,
+-    /* IOMMU heap comes from manually allocated pages,
+-     * can be cached/uncached, is not secured */
+-    GRALLOC_USAGE_PRIVATE_IOMMU_HEAP      =       GRALLOC_USAGE_PRIVATE_2,
++    /* SYSTEM heap comes from kernel vmalloc,
++     * can never be uncached, is not secured*/
++    GRALLOC_USAGE_PRIVATE_SYSTEM_HEAP      =      GRALLOC_USAGE_PRIVATE_2,
+     /* MM heap is a carveout heap for video, can be secured*/
+     GRALLOC_USAGE_PRIVATE_MM_HEAP         =       GRALLOC_USAGE_PRIVATE_3,
+-    /* ADSP heap is a carveout heap, is not secured*/
+-    GRALLOC_USAGE_PRIVATE_ADSP_HEAP       =       0x01000000,
++    /* IOMMU heap comes from manually allocated pages,
++     * can be cached/uncached, is not secured */
++    GRALLOC_USAGE_PRIVATE_IOMMU_HEAP      =       0x01000000,
+ 
+     /* Set this for allocating uncached memory (using O_DSYNC)
+      * cannot be used with noncontiguous heaps */
+-- 
+1.9.1
+
