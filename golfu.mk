@@ -86,7 +86,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     btmac
 
-Wifi
+#Wifi
 PRODUCT_PACKAGES += \
     libnetcmdiface
     
@@ -203,24 +203,20 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/firmware/yamato_pm4.fw:system/etc/firmware/yamato_pm4.fw \
     device/htc/golfu/proprietary/etc/firmware/leia_pfp_470.fw:system/etc/firmware/leia_pfp_470.fw \
     device/htc/golfu/proprietary/etc/firmware/leia_pm4_470.fw:system/etc/firmware/leia_pm4_470.fw \
-    vendor/htc/pico/proprietary/etc/firmware/yamato_pfp.fw:system/etc/firmware/yamato_pfp.fw \
-    vendor/htc/pico/proprietary/etc/firmware/yamato_pm4.fw:system/etc/firmware/yamato_pm4.fw \
-    device/htc/pico/prebuilt/etc/firmware/leia_pfp_470.fw:system/etc/firmware/leia_pfp_470.fw \
-    device/htc/pico/prebuilt/etc/firmware/leia_pm4_470.fw:system/etc/firmware/leia_pm4_470.fw \
-    vendor/htc/pico/proprietary/lib/libgsl.so:system/vendor/lib/libgsl.so \
-    vendor/htc/pico/proprietary/lib/libOpenCL.so:system/vendor/lib/libOpenCL.so \
-    vendor/htc/pico/proprietary/lib/libOpenVG.so:system/vendor/lib/libOpenVG.so \
-    vendor/htc/pico/proprietary/lib/libsc-a2xx.so:system/vendor/lib/libsc-a2xx.so \
-    vendor/htc/pico/proprietary/lib/libC2D2.so:system/vendor/lib/libC2D2.so \
-    vendor/htc/pico/proprietary/lib/libc2d2_z180.so:system/vendor/lib/libc2d2_z180.so \
-    vendor/htc/pico/proprietary/lib/libCB.so:system/vendor/lib/libCB.so \
-    vendor/htc/pico/proprietary/lib/libadreno_utils.so:system/vendor/lib/libadreno_utils.so \
-    vendor/htc/pico/proprietary/lib/egl/eglsubAndroid.so:system/vendor/lib/egl/eglsubAndroid.so \
-    vendor/htc/pico/proprietary/lib/egl/libEGL_adreno.so:system/vendor/lib/egl/libEGL_adreno.so \
-    vendor/htc/pico/proprietary/lib/egl/libGLESv1_CM_adreno.so:system/vendor/lib/egl/libGLESv1_CM_adreno.so \
-    vendor/htc/pico/proprietary/lib/egl/libGLESv2_adreno.so:system/vendor/lib/egl/libGLESv2_adreno.so \
-    vendor/htc/pico/proprietary/lib/egl/libGLESv2S3D_adreno.so:system/vendor/lib/egl/libGLESv2S3D_adreno.so \
-    vendor/htc/pico/proprietary/lib/egl/libq3dtools_adreno.so:system/vendor/lib/egl/libq3dtools_adreno.so
+    device/htc/golfu/proprietary/lib/libgsl.so:system/lib/libgsl.so \
+    device/htc/golfu/proprietary/lib/libOpenCL.so:system/lib/libOpenCL.so \
+    device/htc/golfu/proprietary/lib/libOpenVG.so:system/lib/libOpenVG.so \
+    device/htc/golfu/proprietary/lib/libsc-a2xx.so:system/lib/libsc-a2xx.so \
+    device/htc/golfu/proprietary/lib/libC2D2.so:system/lib/libC2D2.so \
+    device/htc/golfu/proprietary/lib/libc2d2_z180.so:system/lib/libc2d2_z180.so \
+    device/htc/golfu/proprietary/lib/libCB.so:system/lib/libCB.so \
+    device/htc/golfu/proprietary/lib/libadreno_utils.so:system/lib/libadreno_utils.so \
+    device/htc/golfu/proprietary/lib/egl/eglsubAndroid.so:system/lib/egl/eglsubAndroid.so \
+    device/htc/golfu/proprietary/lib/egl/libEGL_adreno.so:system/lib/egl/libEGL_adreno.so \
+    device/htc/golfu/proprietary/lib/egl/libGLESv1_CM_adreno.so:system/lib/egl/libGLESv1_CM_adreno.so \
+    device/htc/golfu/proprietary/lib/egl/libGLESv2_adreno.so:system/lib/egl/libGLESv2_adreno.so \
+    device/htc/golfu/proprietary/lib/egl/libGLESv2S3D_adreno.so:system/lib/egl/libGLESv2S3D_adreno.so \
+    device/htc/golfu/proprietary/lib/egl/libq3dtools_adreno.so:system/lib/egl/libq3dtools_adreno.so
 
 # RIL
 PRODUCT_COPY_FILES += \
@@ -249,7 +245,7 @@ PRODUCT_COPY_FILES += \
 # NFC
 PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/hw/nfc.golfu.so:system/lib/hw/nfc.golfu.so \
-    device/htc/golfu/proprietary/lib/libpn544_fw.so:system/vendor/firmware/libpn544_fw.so
+    device/htc/golfu/proprietary/lib/libpn544_fw.so:system/etc/firmware/libpn544_fw.so
 
 # Audio DSP Profiles
 PRODUCT_COPY_FILES += \
@@ -278,18 +274,6 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/init.qcom.fm.sh:system/etc/init.qcom.fm.sh \
     device/htc/golfu/proprietary/etc/init.qcom.post_boot.sh:system/etc/init.qcom.post_boot.sh \
     device/htc/golfu/proprietary/bin/fm_qsoc_patches:system/bin/fm_qsoc_patches 
-    #device/htc/golfu/proprietary/bin/udhcpd:system/bin/udhcpd \
-    #device/htc/golfu/proprietary/bin/clockd:system/bin/clockd \
-    #device/htc/golfu/proprietary/bin/hci_qcomm_init:system/bin/hci_qcomm_init \
-    #device/htc/golfu/proprietary/bin/hciattach:system/bin/hciattach \
-    #device/htc/golfu/proprietary/bin/netsharing:system/bin/netsharing \
-    #device/htc/golfu/proprietary/bin/zcb:system/bin/zcb \
-    #device/htc/golfu/proprietary/bin/zchgd:system/bin/zchgd \
-    #device/htc/golfu/proprietary/bin/zimmer:system/bin/zimmer \
-    #device/htc/golfu/proprietary/bin/ath6kl-fwlog-record:system/bin/ath6kl-fwlog-record \
-    #device/htc/golfu/proprietary/bin/athtestcmd:system/bin/athtestcmd \
-    #device/htc/golfu/proprietary/xbin/wireless_modem:system/xbin/wireless_modem
-    #device/htc/golfu/proprietary/etc/bluetooth/main.conf:system/etc/bluetooth/main.conf \
 
 # Reduce background apps limit to 12 on low-tier devices
 PRODUCT_PROPERTY_OVERRIDES += \
