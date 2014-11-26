@@ -203,20 +203,21 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/firmware/yamato_pm4.fw:system/etc/firmware/yamato_pm4.fw \
     device/htc/golfu/proprietary/etc/firmware/leia_pfp_470.fw:system/etc/firmware/leia_pfp_470.fw \
     device/htc/golfu/proprietary/etc/firmware/leia_pm4_470.fw:system/etc/firmware/leia_pm4_470.fw \
-    device/htc/golfu/proprietary/lib/libgsl.so:system/lib/libgsl.so \
-    device/htc/golfu/proprietary/lib/libOpenCL.so:system/lib/libOpenCL.so \
-    device/htc/golfu/proprietary/lib/libOpenVG.so:system/lib/libOpenVG.so \
-    device/htc/golfu/proprietary/lib/libsc-a2xx.so:system/lib/libsc-a2xx.so \
-    device/htc/golfu/proprietary/lib/libC2D2.so:system/lib/libC2D2.so \
-    device/htc/golfu/proprietary/lib/libc2d2_z180.so:system/lib/libc2d2_z180.so \
-    device/htc/golfu/proprietary/lib/libCB.so:system/lib/libCB.so \
-    device/htc/golfu/proprietary/lib/libadreno_utils.so:system/lib/libadreno_utils.so \
-    device/htc/golfu/proprietary/lib/egl/eglsubAndroid.so:system/lib/egl/eglsubAndroid.so \
-    device/htc/golfu/proprietary/lib/egl/libEGL_adreno.so:system/lib/egl/libEGL_adreno.so \
-    device/htc/golfu/proprietary/lib/egl/libGLESv1_CM_adreno.so:system/lib/egl/libGLESv1_CM_adreno.so \
-    device/htc/golfu/proprietary/lib/egl/libGLESv2_adreno.so:system/lib/egl/libGLESv2_adreno.so \
-    device/htc/golfu/proprietary/lib/egl/libGLESv2S3D_adreno.so:system/lib/egl/libGLESv2S3D_adreno.so \
-    device/htc/golfu/proprietary/lib/egl/libq3dtools_adreno.so:system/lib/egl/libq3dtools_adreno.so
+    device/htc/golfu/proprietary/lib/libgsl.so:system/vendor/lib/libgsl.so \
+    device/htc/golfu/proprietary/lib/libllvm-arm.so:system/vendor/lib/libllvm-arm.so \
+    device/htc/golfu/proprietary/lib/libOpenCL.so:system/vendor/lib/libOpenCL.so \
+    device/htc/golfu/proprietary/lib/libOpenVG.so:system/vendor/lib/libOpenVG.so \
+    device/htc/golfu/proprietary/lib/libsc-a2xx.so:system/vendor/lib/libsc-a2xx.so \
+    device/htc/golfu/proprietary/lib/libC2D2.so:system/vendor/lib/libC2D2.so \
+    device/htc/golfu/proprietary/lib/libc2d2_z180.so:system/vendor/lib/libc2d2_z180.so \
+    device/htc/golfu/proprietary/lib/libCB.so:system/vendor/lib/libCB.so \
+    device/htc/golfu/proprietary/lib/libadreno_utils.so:system/vendor/lib/libadreno_utils.so \
+    device/htc/golfu/proprietary/lib/egl/eglsubAndroid.so:system/vendor/lib/egl/eglsubAndroid.so \
+    device/htc/golfu/proprietary/lib/egl/libEGL_adreno.so:system/vendor/lib/egl/libEGL_adreno.so \
+    device/htc/golfu/proprietary/lib/egl/libGLESv1_CM_adreno.so:system/vendor/lib/egl/libGLESv1_CM_adreno.so \
+    device/htc/golfu/proprietary/lib/egl/libGLESv2_adreno.so:system/vendor/lib/egl/libGLESv2_adreno.so \
+    device/htc/golfu/proprietary/lib/egl/libGLESv2S3D_adreno.so:system/vendor/lib/egl/libGLESv2S3D_adreno.so \
+    device/htc/golfu/proprietary/lib/egl/libq3dtools_adreno.so:system/vendor/lib/egl/libq3dtools_adreno.so
 
 # RIL
 PRODUCT_COPY_FILES += \
@@ -245,7 +246,7 @@ PRODUCT_COPY_FILES += \
 # NFC
 PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/hw/nfc.golfu.so:system/lib/hw/nfc.golfu.so \
-    device/htc/golfu/proprietary/lib/libpn544_fw.so:system/etc/firmware/libpn544_fw.so
+    device/htc/golfu/proprietary/lib/libpn544_fw.so:system/vendor/firmware/libpn544_fw.so
 
 # Audio DSP Profiles
 PRODUCT_COPY_FILES += \
