@@ -26,8 +26,8 @@ DEVICE_PACKAGE_OVERLAYS += device/htc/golfu/overlay
 # Video decoding
 PRODUCT_PACKAGES += \
     libstagefrighthw \
-    libOmxCore
-    #libdashplayer
+    libOmxCore \
+    libdashplayer
     
 # Graphics 
 PRODUCT_PACKAGES += \
@@ -150,11 +150,27 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/libmm-adspsvc.so:system/lib/libmm-adspsvc.so \
     device/htc/golfu/proprietary/lib/libmmosal.so:system/lib/libmmosal.so \
     device/htc/golfu/proprietary/lib/libmmparser.so:system/lib/libmmparser.so \
-    device/htc/golfu/proprietary/lib/libOmxH264Dec.so:system/lib/libOmxH264Dec.so \
-    device/htc/golfu/proprietary/lib/libOmxMpeg4Dec.so:system/lib/libOmxMpeg4Dec.so \
-    device/htc/golfu/proprietary/lib/libOmxVidEnc.so:system/lib/libOmxVidEnc.so \
+    device/htc/golfu/proprietary/omx/libOmxH264Dec.so:system/lib/libOmxH264Dec.so \
+    device/htc/golfu/proprietary/omx/libOmxMpeg4Dec.so:system/lib/libOmxMpeg4Dec.so \
+    device/htc/golfu/proprietary/omx/libOmxVidEnc.so:system/lib/libOmxVidEnc.so \
     device/htc/golfu/proprietary/lib/libmmparser_divxdrmlib.so:system/lib/libmmparser_divxdrmlib.so \
-    device/htc/golfu/proprietary/lib/libdivxdrmdecrypt.so:system/lib/libdivxdrmdecrypt.so
+    device/htc/golfu/proprietary/lib/libdivxdrmdecrypt.so:system/lib/libdivxdrmdecrypt.so \
+    device/htc/golfu/proprietary/omx/libOmxAacDec.so:system/lib/libOmxAacDec.so \
+    device/htc/golfu/proprietary/omx/libOmxAacEnc.so:system/lib/libOmxAacEnc.so \
+    device/htc/golfu/proprietary/omx/libOmxAc3HwDec.so:system/lib/libOmxAc3HwDec.so \
+    device/htc/golfu/proprietary/omx/libOmxAdpcmDec.so:system/lib/libOmxAdpcmDec.so \
+    device/htc/golfu/proprietary/omx/libOmxAmrDec.so:system/lib/libOmxAmrDec.so \
+    device/htc/golfu/proprietary/omx/libOmxAmrEnc.so:system/lib/libOmxAmrEnc.so \
+    device/htc/golfu/proprietary/omx/libOmxAmrRtpDec.so:system/lib/libOmxAmrRtpDec.so \
+    device/htc/golfu/proprietary/omx/libOmxAmrwbDec.so:system/lib/libOmxAmrwbDec.so \
+    device/htc/golfu/proprietary/omx/libOmxEvrcDec.so:system/lib/libOmxEvrcDec.so \
+    device/htc/golfu/proprietary/omx/libOmxEvrcEnc.so:system/lib/libOmxEvrcEnc.so \
+    device/htc/golfu/proprietary/omx/libOmxEvrcHwDec.so:system/lib/libOmxEvrcHwDec.so \
+    device/htc/golfu/proprietary/omx/libOmxMp3Dec.so:system/lib/libOmxMp3Dec.so \
+    device/htc/golfu/proprietary/omx/libOmxQcelp13Dec.so:system/lib/libOmxQcelp13Dec.so \
+    device/htc/golfu/proprietary/omx/libOmxQcelp13Enc.so:system/lib/libOmxQcelp13Enc.so \
+    device/htc/golfu/proprietary/omx/libOmxQcelpHwDec.so:system/lib/libOmxQcelpHwDec.so \
+    device/htc/golfu/proprietary/omx/libOmxWmaDec.so:system/lib/libOmxWmaDec.so
 
 #Publish that we support the live wallpaper feature.
 PRODUCT_COPY_FILES += \
@@ -276,15 +292,9 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/etc/init.qcom.post_boot.sh:system/etc/init.qcom.post_boot.sh \
     device/htc/golfu/proprietary/bin/fm_qsoc_patches:system/bin/fm_qsoc_patches 
 
-# Reduce background apps limit to 12 on low-tier devices
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.sys.fw.bg_apps_limit=12
-
-# Set max background services
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.config.max_starting_bg=6    
-
-PRODUCT_PROPERTY_OVERRIDES += \
+    ro.sys.fw.bg_apps_limit=12 \
+    ro.config.max_starting_bg=6 \
     ro.com.android.mobiledata=false \
     ro.com.android.dataroaming=false
 	
