@@ -55,6 +55,7 @@ TARGET_USE_QCOM_BIONIC_OPTIMIZATION := true
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/htc/golfu
 TARGET_KERNEL_CONFIG := golfu_defconfig
+TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-linux-gnueabi-linaro-4.9
 BOARD_KERNEL_CMDLINE := no_console_suspend=1 console=null androidboot.hardware=golfu
 BOARD_KERNEL_BASE := 0x13000000
 
@@ -131,6 +132,7 @@ BOARD_USE_NEW_LIBRIL_HTC := true
 # Camera
 BOARD_NEEDS_MEMORYHEAPPMEM := true
 CAMERA_USES_SURFACEFLINGER_CLIENT_STUB := true
+BOARD_USES_QCOM_LEGACY_CAM_PARAMS := true
 BOARD_USES_PMEM_ADSP := true
 
 # Add h/w acceleration in browser
@@ -141,8 +143,8 @@ JS_ENGINE := v8
 HTTP := chrome
 
 # Webkit
-PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
-TARGET_FORCE_CPU_UPLOAD := true
+#PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
+#TARGET_FORCE_CPU_UPLOAD := true
 
 # Touch screen compatibility for JB
 BOARD_USE_LEGACY_TOUCHSCREEN := true
@@ -164,8 +166,8 @@ BOARD_HAS_NO_SELECT_BUTTON := true
 TARGET_RECOVERY_INITRC := device/htc/golfu/recovery/init-twrp.rc
 DEVICE_RESOLUTION := 320x480
 TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
-TW_BRIGHTNESS_PATH := /sys/devices/platform/msm_fb.590849/leds/lcd-backlight/brightness
-TW_MAX_BRIGHTNESS := 255
+#TW_BRIGHTNESS_PATH := /sys/devices/platform/msm_fb.590849/leds/lcd-backlight/brightness
+#TW_MAX_BRIGHTNESS := 255
 RECOVERY_GRAPHICS_USE_LINELENGTH := true
 
 # Partition sizes

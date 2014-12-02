@@ -12,15 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# proprietary side of the device
-# Inherit from those products. Most specific first
-
-$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
-# The gps config appropriate for this device
-$(call inherit-product, device/common/gps/gps_eu_supl.mk)
-
-$(call inherit-product-if-exists, vendor/htc/golfu/golfu-vendor.mk)
-
 DEVICE_PACKAGE_OVERLAYS += device/htc/golfu/overlay
 
 # Video decoding
@@ -66,8 +57,8 @@ PRODUCT_PACKAGES += \
     libhealthd.msm7x27a
     
 # Webkit
-PRODUCT_PACKAGES += \
-    libwebcore
+#PRODUCT_PACKAGES += \
+#    libwebcore
    
 # Camera
 PRODUCT_PACKAGES += \
@@ -303,7 +294,6 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
     ro.secure=0
 	
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
-$(call inherit-product, build/target/product/full_base_telephony.mk)
     
 PRODUCT_AAPT_CONFIG := normal mdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
