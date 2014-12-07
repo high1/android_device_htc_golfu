@@ -55,7 +55,6 @@ TARGET_USE_QCOM_BIONIC_OPTIMIZATION := true
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/htc/golfu
 TARGET_KERNEL_CONFIG := golfu_defconfig
-TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-linux-gnueabi-linaro-4.9
 BOARD_KERNEL_CMDLINE := no_console_suspend=1 console=null androidboot.hardware=golfu
 BOARD_KERNEL_BASE := 0x13000000
 
@@ -120,7 +119,6 @@ TARGET_USES_QCOM_BSP := true
 TARGET_DISPLAY_USE_RETIRE_FENCE := true
 HWUI_COMPILE_FOR_PERF := true
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
-#BOARD_USE_MHEAP_SCREENSHOT := true
 
 # ION Support
 TARGET_USES_ION := true
@@ -142,10 +140,6 @@ ENABLE_JSC_JIT := true
 JS_ENGINE := v8
 HTTP := chrome
 
-# Webkit
-#PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
-#TARGET_FORCE_CPU_UPLOAD := true
-
 # Touch screen compatibility for JB
 BOARD_USE_LEGACY_TOUCHSCREEN := true
 
@@ -155,20 +149,29 @@ TARGET_PROVIDES_LIBLIGHT := true
 # Keep Size in check
 #SMALLER_FONT_FOOTPRINT := true
 
-# Power
-TARGET_PROVIDES_POWERHAL := true
-
 # Recovery
 TARGET_RECOVERY_FSTAB := device/htc/golfu/ramdisk/fstab.golfu
 BOARD_HAS_NO_SELECT_BUTTON := true
 
+RECOVERY_VARIANT := omni
+
+#Philz
+ifeq ($(RECOVERY_VARIANT),philz)
+  TARGET_RECOVERY_INITRC := device/htc/golfu/recovery/init.recovery.golfu.rc
+  TARGET_SCREEN_HEIGHT := 480
+  TARGET_SCREEN_WIDTH := 320
+  TARGET_COMMON_NAME := HTC Desire C
+  BOARD_USE_CUSTOM_RECOVERY_FONT := \"font_7x16.h\"
+  BOARD_HAS_LOW_RESOLUTION := true
+endif
+
 # TWRP
-TARGET_RECOVERY_INITRC := device/htc/golfu/recovery/init-twrp.rc
-DEVICE_RESOLUTION := 320x480
-TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
-#TW_BRIGHTNESS_PATH := /sys/devices/platform/msm_fb.590849/leds/lcd-backlight/brightness
-#TW_MAX_BRIGHTNESS := 255
-RECOVERY_GRAPHICS_USE_LINELENGTH := true
+ifeq ($(RECOVERY_VARIANT),omni)
+  TARGET_RECOVERY_INITRC := device/htc/golfu/recovery/init.twrp.rc
+  DEVICE_RESOLUTION := 320x480
+  TARGET_RECOVERY_PIXEL_FORMAT := "RGB_565"
+  RECOVERY_GRAPHICS_USE_LINELENGTH := true
+endif
 
 # Partition sizes
 TARGET_USERIMAGES_USE_EXT4 := true
