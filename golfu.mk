@@ -68,12 +68,18 @@ PRODUCT_PACKAGES += \
 
 # Bluetooth
 PRODUCT_PACKAGES += \
-    btmac
+    btmac 
 
 #Wifi
 PRODUCT_PACKAGES += \
     libnetcmdiface
-    
+
+# FM Radio
+PRODUCT_PACKAGES += \
+    FM2 \
+    libqcomfm_jni \
+    qcom.fmradio
+
 # Misc
 PRODUCT_PACKAGES += \
     com.android.future.usb.accessory \
@@ -226,7 +232,7 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/bin/qmuxd:system/bin/qmuxd \
     device/htc/golfu/proprietary/lib/libhtc_ril.so:system/lib/libhtc_ril.so \
     device/htc/golfu/proprietary/lib/libqc-opt.so:system/lib/libqc-opt.so
-    
+
 #Lib for qmuxd
 PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/libdiag.so:system/lib/libdiag.so \
@@ -238,7 +244,7 @@ PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/libqdp.so:system/lib/libqdp.so \
     device/htc/golfu/proprietary/lib/libqmi.so:system/lib/libqmi.so \
     device/htc/golfu/proprietary/lib/libqmiservices.so:system/lib/libqmiservices.so \
-    
+
 # Bluetooth
 PRODUCT_COPY_FILES += \
     device/htc/golfu/proprietary/lib/liboncrpc.so:obj/lib/liboncrpc.so \
@@ -273,9 +279,8 @@ PRODUCT_COPY_FILES += \
 
 # Proprietary Binaries
 PRODUCT_COPY_FILES += \
-    device/htc/golfu/proprietary/etc/init.qcom.bt.sh:system/etc/init.qcom.bt.sh \
+    device/htc/golfu/proprietary/bin/hci_qcomm_init:system/bin/hci_qcomm_init \
     device/htc/golfu/proprietary/etc/init.qcom.fm.sh:system/etc/init.qcom.fm.sh \
-    device/htc/golfu/proprietary/etc/init.qcom.post_boot.sh:system/etc/init.qcom.post_boot.sh \
     device/htc/golfu/proprietary/bin/fm_qsoc_patches:system/bin/fm_qsoc_patches 
 
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -283,13 +288,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.max_starting_bg=6 \
     ro.com.android.mobiledata=false \
     ro.com.android.dataroaming=false
-	
+
 ADDITIONAL_DEFAULT_PROPERTIES += \
     ro.adb.secure=0 \
     ro.secure=0
 
 $(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)
-    
+
 PRODUCT_AAPT_CONFIG := normal mdpi
 PRODUCT_AAPT_PREF_CONFIG := mdpi
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
