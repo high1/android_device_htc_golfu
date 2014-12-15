@@ -282,17 +282,6 @@ service fm_dl /system/bin/sh /system/etc/init.qcom.fm.sh
     disabled
     oneshot
 
-#service qcom-post-boot /system/bin/sh /system/etc/init.qcom.post_boot.sh
-#    user root
-#    disabled
-#    oneshot
-
-#service modem /system/xbin/wireless_modem
-#    user system
-#    group system radio
-#    disabled
-#    oneshot
-
 #on property:service.modem.enable=1
 #    start modem
     
