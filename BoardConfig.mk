@@ -152,17 +152,19 @@ TARGET_PROVIDES_LIBLIGHT := true
 # Recovery
 TARGET_RECOVERY_FSTAB := device/htc/golfu/ramdisk/fstab.golfu
 BOARD_HAS_NO_SELECT_BUTTON := true
+#TARGET_RECOVERY_INITRC := device/htc/golfu/recovery/init.recovery.golfu.rc
 
 RECOVERY_VARIANT := omni
 
 #Philz
 ifeq ($(RECOVERY_VARIANT),philz)
-  TARGET_RECOVERY_INITRC := device/htc/golfu/recovery/init.recovery.golfu.rc
+  TARGET_COMMON_NAME := HTC Desire C
+  BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_10x18.h\"
+  BOARD_USE_NTFS_3G := false
   TARGET_SCREEN_HEIGHT := 480
   TARGET_SCREEN_WIDTH := 320
-  TARGET_COMMON_NAME := HTC Desire C
-  BOARD_USE_CUSTOM_RECOVERY_FONT := \"font_7x16.h\"
   BOARD_HAS_LOW_RESOLUTION := true
+  BRIGHTNESS_SYS_FILE := "/sys/class/leds/lcd-backlight/brightness"
 endif
 
 # TWRP
