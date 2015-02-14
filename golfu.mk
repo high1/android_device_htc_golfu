@@ -75,10 +75,10 @@ PRODUCT_PACKAGES += \
     libnetcmdiface
 
 # FM Radio
-PRODUCT_PACKAGES += \
-    FM2 \
-    libqcomfm_jni \
-    qcom.fmradio
+#PRODUCT_PACKAGES += \
+#    FM2 \
+#    libqcomfm_jni \
+#    qcom.fmradio
 
 # Misc
 PRODUCT_PACKAGES += \
