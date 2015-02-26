@@ -1,0 +1,11 @@
+# Android fstab file.
+# specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
+#<src>                                          <mnt_point>         <type>  <mnt_flags and options>                                                            <fs_mgr_flags>
+/dev/block/mmcblk0p25                           /system             ext4    ro,barrier=1                                                                       wait
+/dev/block/mmcblk0p28                           /cache              f2fs    rw,noatime,nosuid,nodev,discard,nodiratime,inline_xattr,inline_data,flush_merge    wait,nonremovable,check
+/dev/block/mmcblk0p26                           /data               f2fs    rw,noatime,nosuid,nodev,discard,nodiratime,inline_xattr,inline_data,flush_merge    wait,nonremovable,check,encryptable=footer,length=-16384
+/dev/block/mmcblk0p22                           /boot               emmc    defaults                                                                           defaults
+/dev/block/mmcblk0p21                           /recovery           emmc    defaults                                                                           defaults
+/dev/block/mmcblk0p17                           /misc               emmc    defaults                                                                           defaults 
+/devices/platform/msm_sdcc.1/mmc_host/mmc1      auto                auto    defaults                                                                           voldmanaged=sdcard0:auto,noemulatedsd
+/dev/block/zram0                                none                swap    defaults                                                                           zramsize=67108864

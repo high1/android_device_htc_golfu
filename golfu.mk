@@ -85,14 +85,27 @@ PRODUCT_PACKAGES += \
     com.android.future.usb.accessory \
     dexpreopt \
     librpc
-    
+
+# F2FS
+PRODUCT_PACKAGES += \
+    mkfs.f2fs \
+    fsck.f2fs \
+    make_f2fs \
+    mkf2fsuserimg.sh 
+
 # Ramdisk
 PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*,device/htc/golfu/ramdisk,root)
 
+RECOVERY_VARIANT := omni
 # Recovery
+ifeq ($(RECOVERY_VARIANT),omni)
 PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,device/htc/golfu/prebuilt/recovery,recovery/root)
+    $(call find-copy-subdir-files,*,device/htc/golfu/prebuilt/recovery/omni,recovery/root)
+else
+PRODUCT_COPY_FILES += \
+    $(call find-copy-subdir-files,*,device/htc/golfu/prebuilt/recovery/cm,recovery/root)
+endif
     
 # Prebuilt
 PRODUCT_COPY_FILES += \
@@ -121,15 +134,6 @@ PRODUCT_COPY_FILES += \
 #Publish that we support the live wallpaper feature.
 PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:/system/etc/permissions/android.software.live_wallpaper.xml
-    
-# Recovery
-ifeq ($(RECOVERY_VARIANT),omni)
-PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,device/htc/golfu/prebuilt/recovery/omni,recovery/root)
-else
-PRODUCT_COPY_FILES += \
-    $(call find-copy-subdir-files,*,device/htc/golfu/prebuilt/recovery/cm,recovery/root)
-endif
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.sys.fw.bg_apps_limit=12 \
