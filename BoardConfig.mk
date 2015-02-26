@@ -56,6 +56,7 @@ TARGET_USE_QCOM_BIONIC_OPTIMIZATION := true
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/htc/golfu
 TARGET_KERNEL_CONFIG := golfu_defconfig
+TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-cortex_a7-linux-gnueabihf-linaro
 BOARD_KERNEL_CMDLINE := no_console_suspend=1 console=null androidboot.hardware=golfu
 BOARD_KERNEL_BASE := 0x13000000
 
@@ -151,11 +152,13 @@ TARGET_PROVIDES_LIBLIGHT := true
 # Keep Size in check
 #SMALLER_FONT_FOOTPRINT := true
 
+WITH_DEXPREOPT := true
+DONT_DEXPREOPT_PREBUILTS := true
+
 # Recovery
 TARGET_RECOVERY_FSTAB := device/htc/golfu/ramdisk/fstab.golfu
 BOARD_HAS_NO_SELECT_BUTTON := true
 #TARGET_RECOVERY_INITRC := device/htc/golfu/recovery/init.recovery.golfu.rc
-
 RECOVERY_VARIANT := omni
 
 #Philz
@@ -177,8 +180,10 @@ ifeq ($(RECOVERY_VARIANT),omni)
   RECOVERY_GRAPHICS_USE_LINELENGTH := true
 endif
 
-# Partition sizes
 TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
+
+# Partition sizes
 BOARD_BOOTIMAGE_PARTITION_SIZE := 4194304
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 8909824
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 836763136
