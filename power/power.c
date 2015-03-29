@@ -1,48 +1,89 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (c) 2012, The Linux Foundation. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ * *    * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ *       copyright notice, this list of conditions and the following
+ *       disclaimer in the documentation and/or other materials provided
+ *       with the distribution.
+ *     * Neither the name of The Linux Foundation nor the names of its
+ *       contributors may be used to endorse or promote products derived
+ *       from this software without specific prior written permission.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include <errno.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <dlfcn.h>
+#include <stdlib.h>
 
-#define LOG_TAG "HTC PowerHAL"
+#define LOG_TAG "QCOM PowerHAL"
+
 #include <utils/Log.h>
+#include <cutils/properties.h>
 
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
+#include "metadata-defs.h"
+
 #define SCALING_GOVERNOR_PATH "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
-#define BOOSTPULSE_ONDEMAND "/sys/devices/system/cpu/cpufreq/ondemand/boostpulse"
-#define BOOSTPULSE_INTERACTIVE "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
-#define BOOSTPULSE_SMARTASS2 "/sys/devices/system/cpu/cpufreq/smartass/boost_pulse"
-#define BOOSTPULSE_SMARTASSH3 "/sys/devices/system/cpu/cpufreq/smartassH3/boost_pulse"
-#define SAMPLING_RATE_SCREEN_ON "50000"
-#define SAMPLING_RATE_SCREEN_OFF "500000"
-#define TIMER_RATE_SCREEN_ON "30000"
-#define TIMER_RATE_SCREEN_OFF "500000"
+#define ONDEMAND_PATH "/sys/devices/system/cpu/cpufreq/ondemand/"
+#define ONDEMAND_IO_BUSY_PATH "/sys/devices/system/cpu/cpufreq/ondemand/io_is_busy"
+#define ONDEMAND_SAMPLING_DOWN_PATH "/sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor"
 
-struct lge_power_module {
-    struct power_module base;
-    pthread_mutex_t lock;
-    int boostpulse_fd;
-    int boostpulse_warned;
-};
+static int (*perf_vote_turnoff_ondemand_io_busy)(int vote);
+static int perf_vote_ondemand_io_busy_unavailable;
+static int (*perf_vote_lower_ondemand_sdf)(int vote);
+static int perf_vote_ondemand_sdf_unavailable;
+static void *qcopt_handle;
+static int qcopt_handle_unavailable;
+static int saved_ondemand_sampling_down_factor = 4;
+static int saved_ondemand_io_is_busy_status = 1;
 
-static char governor[20];
+static void *get_qcopt_handle()
+{
+    if (qcopt_handle_unavailable) {
+        return NULL;
+    }
+
+    if (!qcopt_handle) {
+        char qcopt_lib_path[PATH_MAX] = {0};
+        dlerror();
+
+        if (property_get("ro.vendor.extension_library", qcopt_lib_path,
+                    NULL) != 0) {
+            if((qcopt_handle = dlopen(qcopt_lib_path, RTLD_NOW)) == NULL) {
+                qcopt_handle_unavailable = 1;
+                ALOGE("Unable to open %s: %s\n", qcopt_lib_path,
+                        dlerror());
+            }
+        } else {
+            qcopt_handle_unavailable = 1;
+            ALOGE("Property ro.vendor.extension_library does not exist.");
+        }
+    }
+
+    return qcopt_handle;
+}
 
 static int sysfs_read(char *path, char *s, int num_bytes)
 {
@@ -72,30 +113,45 @@ static int sysfs_read(char *path, char *s, int num_bytes)
     return ret;
 }
 
-static void sysfs_write(char *path, char *s)
+static int sysfs_write(char *path, char *s)
 {
     char buf[80];
     int len;
+    int ret = 0;
     int fd = open(path, O_WRONLY);
 
     if (fd < 0) {
         strerror_r(errno, buf, sizeof(buf));
         ALOGE("Error opening %s: %s\n", path, buf);
-        return;
+        return -1 ;
     }
 
     len = write(fd, s, strlen(s));
     if (len < 0) {
         strerror_r(errno, buf, sizeof(buf));
         ALOGE("Error writing to %s: %s\n", path, buf);
+
+        ret = -1;
     }
 
     close(fd);
+
+    return ret;
 }
 
-static int get_scaling_governor() {
+static struct hw_module_methods_t power_module_methods = {
+    .open = NULL,
+};
+
+void power_init(struct power_module *module)
+{
+    ALOGI("QCOM power HAL initing.");
+}
+
+static int get_scaling_governor(char governor[], int size) {
     if (sysfs_read(SCALING_GOVERNOR_PATH, governor,
-                sizeof(governor)) == -1) {
+                size) == -1) {
+        // Can't obtain the scaling governor. Return.
         return -1;
     } else {
         // Strip newline at the end.
@@ -110,137 +166,136 @@ static int get_scaling_governor() {
     return 0;
 }
 
-static void lge_power_set_interactive(struct power_module *module, int on)
+static void process_video_encode_hint(void *metadata)
 {
-    if (strncmp(governor, "ondemand", 8) == 0)
-        sysfs_write("/sys/devices/system/cpu/cpufreq/ondemand/sampling_rate",
-                on ? SAMPLING_RATE_SCREEN_ON : SAMPLING_RATE_SCREEN_OFF);
-    else if (strncmp(governor, "interactive", 11) == 0)
-        sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/timer_rate",
-                on ? TIMER_RATE_SCREEN_ON : TIMER_RATE_SCREEN_OFF);
-}
+    void *handle;
+    char governor[80];
+    struct video_encode_metadata_t video_encode_metadata;
 
+    if (get_scaling_governor(governor, sizeof(governor)) == -1) {
+        ALOGE("Can't obtain scaling governor.");
 
-static void configure_governor()
-{
-    lge_power_set_interactive(NULL, 1);
-
-    if (strncmp(governor, "ondemand", 8) == 0) {
-        sysfs_write("/sys/devices/system/cpu/cpufreq/ondemand/up_threshold", "90");
-        sysfs_write("/sys/devices/system/cpu/cpufreq/ondemand/io_is_busy", "1");
-        sysfs_write("/sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor", "4");
-        sysfs_write("/sys/devices/system/cpu/cpufreq/ondemand/down_differential", "10");
-
-    } else if (strncmp(governor, "interactive", 11) == 0) {
-        sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time", "90000");
-        sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/io_is_busy", "1");
-        sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/hispeed_freq", "1134000");
-        sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay", "30000");
+        return;
     }
-}
 
-static int boostpulse_open(struct lge_power_module *lge)
-{
-    char buf[80];
+    /* Initialize encode metadata struct fields. */
+    memset(&video_encode_metadata, 0, sizeof(video_encode_metadata));
+    video_encode_metadata.state = -1;
 
-    pthread_mutex_lock(&lge->lock);
+    if (metadata) {
+        if (parse_video_metadata((char *)metadata, &video_encode_metadata) ==
+            -1) {
+            ALOGE("Error occurred while parsing metadata.");
+            return;
+        }
+    } else {
+        return;
+    }
 
-    if (lge->boostpulse_fd < 0) {
-        if (get_scaling_governor() < 0) {
-            ALOGE("Can't read scaling governor.");
-            lge->boostpulse_warned = 1;
-        } else {
-            if (strncmp(governor, "ondemand", 8) == 0)
-                lge->boostpulse_fd = open(BOOSTPULSE_ONDEMAND, O_WRONLY);
-            else if (strncmp(governor, "interactive", 11) == 0)
-                lge->boostpulse_fd = open(BOOSTPULSE_INTERACTIVE, O_WRONLY);
-            else if (strncmp(governor, "smartassV2", 10) == 0)
-                lge->boostpulse_fd = open(BOOSTPULSE_SMARTASS2, O_WRONLY);
-            else if (strncmp(governor, "SmartassH3", 10) == 0)
-                lge->boostpulse_fd = open(BOOSTPULSE_SMARTASSH3, O_WRONLY);
+    if ((handle = get_qcopt_handle())) {
+        if (video_encode_metadata.state == 1) {
+            if ((strlen(governor) == strlen("ondemand")) &&
+                    (strncmp(governor, "ondemand", strlen("ondemand")) == 0)) {
+                if (!perf_vote_ondemand_io_busy_unavailable) {
+                    perf_vote_turnoff_ondemand_io_busy = dlsym(handle,
+                            "perf_vote_turnoff_ondemand_io_busy");
 
-            if (lge->boostpulse_fd < 0 && !lge->boostpulse_warned) {
-                strerror_r(errno, buf, sizeof(buf));
-                ALOGV("Error opening boostpulse: %s\n", buf);
-                lge->boostpulse_warned = 1;
-            } else if (lge->boostpulse_fd > 0) {
-                configure_governor();
-                ALOGD("Opened %s boostpulse interface", governor);
+                    if (perf_vote_turnoff_ondemand_io_busy) {
+                        /* Vote to turn io_is_busy off */
+                        perf_vote_turnoff_ondemand_io_busy(1);
+                    } else {
+                        perf_vote_ondemand_io_busy_unavailable = 1;
+                        ALOGE("Can't set io_busy_status.");
+                    }
+                }
+
+                if (!perf_vote_ondemand_sdf_unavailable) {
+                    perf_vote_lower_ondemand_sdf = dlsym(handle,
+                            "perf_vote_lower_ondemand_sdf");
+
+                    if (perf_vote_lower_ondemand_sdf) {
+                        perf_vote_lower_ondemand_sdf(1);
+                    } else {
+                        perf_vote_ondemand_sdf_unavailable = 1;
+                        ALOGE("Can't set sampling_down_factor.");
+                    }
+                }
+            }
+        } else if (video_encode_metadata.state == 0) {
+            if ((strlen(governor) == strlen("ondemand")) &&
+                    (strncmp(governor, "ondemand", strlen("ondemand")) == 0)) {
+                if (!perf_vote_ondemand_io_busy_unavailable) {
+                    perf_vote_turnoff_ondemand_io_busy = dlsym(handle,
+                            "perf_vote_turnoff_ondemand_io_busy");
+
+                    if (perf_vote_turnoff_ondemand_io_busy) {
+                        /* Remove vote to turn io_busy off. */
+                        perf_vote_turnoff_ondemand_io_busy(0);
+                    } else {
+                        perf_vote_ondemand_io_busy_unavailable = 1;
+                        ALOGE("Can't set io_busy_status.");
+                    }
+                }
+
+                if (!perf_vote_ondemand_sdf_unavailable) {
+                    perf_vote_lower_ondemand_sdf = dlsym(handle,
+                            "perf_vote_lower_ondemand_sdf");
+
+                    if (perf_vote_lower_ondemand_sdf) {
+                        /* Remove vote to lower sampling down factor. */
+                        perf_vote_lower_ondemand_sdf(0);
+                    } else {
+                        perf_vote_ondemand_sdf_unavailable = 1;
+                        ALOGE("Can't set sampling_down_factor.");
+                    }
+                }
             }
         }
     }
-
-    pthread_mutex_unlock(&lge->lock);
-    return lge->boostpulse_fd;
 }
 
-static void lge_power_hint(struct power_module *module, power_hint_t hint,
-                            void *data)
+int __attribute__ ((weak)) power_hint_override(struct power_module *module, power_hint_t hint,
+        void *data)
 {
-    struct lge_power_module *lge = (struct lge_power_module *) module;
-    char buf[80];
-    int len;
-    int duration = 1;
+    return -1;
+}
 
-    switch (hint) {
-    case POWER_HINT_INTERACTION:
-    case POWER_HINT_CPU_BOOST:
-        if (boostpulse_open(lge) >= 0) {
-            if (data != NULL)
-                duration = (int) data;
+static void power_hint(struct power_module *module, power_hint_t hint,
+        void *data)
+{
+    /* Check if this hint has been overridden. */
+    if (power_hint_override(module, hint, data) == 0) {
+        /* The power_hint has been handled. We can skip the rest. */
+        return;
+    }
 
-            snprintf(buf, sizeof(buf), "%d", duration);
-            len = write(lge->boostpulse_fd, buf, strlen(buf));
-
-            if (len < 0) {
-                strerror_r(errno, buf, sizeof(buf));
-	            ALOGE("Error writing to boostpulse: %s\n", buf);
-
-                pthread_mutex_lock(&lge->lock);
-                close(lge->boostpulse_fd);
-                lge->boostpulse_fd = -1;
-                lge->boostpulse_warned = 0;
-                pthread_mutex_unlock(&lge->lock);
-            }
-        }
+    switch(hint) {
+        case POWER_HINT_VSYNC:
         break;
-
-    case POWER_HINT_VSYNC:
+        case POWER_HINT_INTERACTION:
         break;
-
-    default:
+        case POWER_HINT_VIDEO_ENCODE:
+            process_video_encode_hint(data);
         break;
     }
 }
 
-static void lge_power_init(struct power_module *module)
+void set_interactive(struct power_module *module, int on)
 {
-    get_scaling_governor();
-    configure_governor();
 }
 
-static struct hw_module_methods_t power_module_methods = {
-    .open = NULL,
-};
-
-struct lge_power_module HAL_MODULE_INFO_SYM = {
-    base: {
-        common: {
-            tag: HARDWARE_MODULE_TAG,
-            version_major: 1,
-            version_minor: 0,
-            id: POWER_HARDWARE_MODULE_ID,
-            name: "HTC-MSM7x27a Power HAL",
-            author: "The CyanogenMod Project",
-            methods: &power_module_methods,
-        },
-
-       init: lge_power_init,
-       setInteractive: lge_power_set_interactive,
-       powerHint: lge_power_hint,
+struct power_module HAL_MODULE_INFO_SYM = {
+    .common = {
+        .tag = HARDWARE_MODULE_TAG,
+        .module_api_version = POWER_MODULE_API_VERSION_0_2,
+        .hal_api_version = HARDWARE_HAL_API_VERSION,
+        .id = POWER_HARDWARE_MODULE_ID,
+        .name = "QCOM Power HAL",
+        .author = "Qualcomm",
+        .methods = &power_module_methods,
     },
 
-    lock: PTHREAD_MUTEX_INITIALIZER,
-    boostpulse_fd: -1,
-    boostpulse_warned: 0,
+    .init = power_init,
+    .powerHint = power_hint,
+    .setInteractive = set_interactive,
 };
