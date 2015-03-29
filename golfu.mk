@@ -11,23 +11,22 @@ $(call inherit-product, device/common/gps/gps_eu_supl.mk)
 $(call inherit-product-if-exists, vendor/htc/golfu/golfu-vendor.mk)
 
 DEVICE_PACKAGE_OVERLAYS += device/htc/golfu/overlay
-
-# Video decoding
-PRODUCT_PACKAGES += \
-    libstagefrighthw \
-    libOmxCore \
-    libdashplayer
     
 # Graphics 
 PRODUCT_PACKAGES += \
-    copybit.msm7x27a \
+    libgenlock \
     gralloc.msm7x27a \
+    copybit.msm7x27a \
     hwcomposer.msm7x27a \
     memtrack.msm7x27a \
-    libgenlock \
-    liboverlay \
-    libtilerenderer \
     libqdMetaData
+
+# Video decoding
+PRODUCT_PACKAGES += \
+    libmm-omxcore \
+    libOmxCore \
+    libstagefrighthw
+   
 
 # Audio
 PRODUCT_PACKAGES += \
@@ -135,12 +134,12 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:/system/etc/permissions/android.software.live_wallpaper.xml
 
+#Disable mobile data on first boot, low ram device flag
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.sys.fw.bg_apps_limit=12 \
-    ro.config.max_starting_bg=6 \
+    ro.config.low_ram=true \
     ro.com.android.mobiledata=false \
     ro.com.android.dataroaming=false
-
+    
 ADDITIONAL_DEFAULT_PROPERTIES += \
     ro.adb.secure=0 \
     ro.secure=0
