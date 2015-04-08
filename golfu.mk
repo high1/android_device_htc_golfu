@@ -19,14 +19,13 @@ PRODUCT_PACKAGES += \
     copybit.msm7x27a \
     hwcomposer.msm7x27a \
     memtrack.msm7x27a \
-    libqdMetaData
+    libqdMetaData 
 
 # Video decoding
 PRODUCT_PACKAGES += \
-    libmm-omxcore \
     libOmxCore \
-    libstagefrighthw
-   
+    libstagefrighthw \
+    libdashplayer
 
 # Audio
 PRODUCT_PACKAGES += \
@@ -85,12 +84,15 @@ PRODUCT_PACKAGES += \
     dexpreopt \
     librpc
 
-# F2FS
+# Filesystem management tools
 PRODUCT_PACKAGES += \
+    make_ext4fs \
+    e2fsck \
+    setup_fs \
     mkfs.f2fs \
     fsck.f2fs \
     make_f2fs \
-    mkf2fsuserimg.sh 
+    mkf2fsuserimg.sh ls -
 
 # Ramdisk
 PRODUCT_COPY_FILES += \
