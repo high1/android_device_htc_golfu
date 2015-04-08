@@ -34,7 +34,6 @@ htc.audio.swalt.enable = 1
 # Display
 debug.composition.type=dyn
 persist.hwc.mdpcomp.enable=false
-debug.mdpcomp.logs=0
 debug.gralloc.map_fb_memory=1
 
 # Video Acceleration
