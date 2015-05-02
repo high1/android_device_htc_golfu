@@ -106,7 +106,7 @@ BOARD_VENDOR_USE_AKMD := akm8975
 BOARD_VENDOR_QCOM_AMSS_VERSION := 6225
 
 # Graphics & CAF
-BOARD_EGL_CFG := device/htc/golfu/prebuilt/system/lib/egl/egl.cfg
+#BOARD_EGL_CFG := device/htc/golfu/prebuilt/system/lib/egl/egl.cfg
 USE_OPENGL_RENDERER := true
 TARGET_QCOM_DISPLAY_VARIANT := caf
 BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
@@ -126,6 +126,9 @@ BOARD_USE_NEW_LIBRIL_HTC := true
 BOARD_NEEDS_MEMORYHEAPPMEM := true
 CAMERA_USES_SURFACEFLINGER_CLIENT_STUB := true
 BOARD_USES_PMEM_ADSP := true
+
+#Legacy OMX
+TARGET_QCOM_LEGACY_OMX := true
 
 # Touch screen compatibility for JB
 BOARD_USE_LEGACY_TOUCHSCREEN := true
