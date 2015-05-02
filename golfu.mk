@@ -66,11 +66,7 @@ PRODUCT_PACKAGES += \
 
 # Bluetooth
 PRODUCT_PACKAGES += \
-    btmac 
-
-#Wifi
-PRODUCT_PACKAGES += \
-    libnetcmdiface
+    btmac
 
 # FM Radio
 #PRODUCT_PACKAGES += \
@@ -85,14 +81,14 @@ PRODUCT_PACKAGES += \
     librpc
 
 # Filesystem management tools
-PRODUCT_PACKAGES += \
+#PRODUCT_PACKAGES += \
     make_ext4fs \
     e2fsck \
     setup_fs \
     mkfs.f2fs \
     fsck.f2fs \
     make_f2fs \
-    mkf2fsuserimg.sh ls -
+    mkf2fsuserimg.sh ls
 
 # Ramdisk
 PRODUCT_COPY_FILES += \
@@ -140,7 +136,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.low_ram=true \
     ro.com.android.mobiledata=false \
-    ro.com.android.dataroaming=false
+    ro.com.android.dataroaming=false \
+    ro.sys.fw.bg_apps_limit=12 \
+    ro.config.max_starting_bg=6 
     
 ADDITIONAL_DEFAULT_PROPERTIES += \
     ro.adb.secure=0 \
