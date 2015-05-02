@@ -1,9 +1,12 @@
 # Android fstab file.
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 #<src>                                          <mnt_point>         <type>  <mnt_flags and options>                                                            <fs_mgr_flags>
-/dev/block/mmcblk0p25                           /system             ext4    ro,barrier=1                                                                       wait
-/dev/block/mmcblk0p28                           /cache              f2fs    rw,noatime,nosuid,nodev,discard,nodiratime,inline_xattr,inline_data,flush_merge    wait,nonremovable,check
-/dev/block/mmcblk0p26                           /data               f2fs    rw,noatime,nosuid,nodev,discard,nodiratime,inline_xattr,inline_data,flush_merge    wait,nonremovable,check,encryptable=footer,length=-16384
+/dev/block/mmcblk0p25                           /system             ext4    ro                                                                                 wait
+/dev/block/mmcblk0p25                           /system             f2fs    ro                                                                                 wait
+/dev/block/mmcblk0p28                           /cache              ext4    discard,nosuid,nodev,noatime,errors=panic                                          wait,check
+/dev/block/mmcblk0p28                           /cache              f2fs    noatime,nosuid,nodev,discard,nodiratime,inline_xattr,errors=recover                wait,nonremovable
+/dev/block/mmcblk0p26                           /data               ext4    discard,nosuid,nodev,noatime,noauto_da_alloc,journal_async_commit,errors=panic     wait,check
+/dev/block/mmcblk0p26                           /data               f2fs    noatime,nosuid,nodev,discard,nodiratime,inline_xattr,errors=recover                wait,nonremovable
 /dev/block/mmcblk0p22                           /boot               emmc    defaults                                                                           defaults
 /dev/block/mmcblk0p21                           /recovery           emmc    defaults                                                                           defaults
 /dev/block/mmcblk0p17                           /misc               emmc    defaults                                                                           defaults 

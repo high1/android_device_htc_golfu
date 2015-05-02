@@ -1,0 +1,444 @@
+From 2fbf9f99a680cff17c34e201967b1b78fc97b7be Mon Sep 17 00:00:00 2001
+From: "Russ W. Knize" <Russ.Knize@motorola.com>
+Date: Sat, 7 Jun 2014 23:40:00 -0700
+Subject: [PATCH] fs_mgr: support multiple file systems on a mount point
+
+This is a combination of 3 commits pulled from Motorola's github for
+allowing f2_mgr to have "fallback" handling for a mount point.  This
+is most useful in the case of f2fs where some variants may be formatted
+ext4 and some f2fs.  These device can now be supported in 1 fstab.
+
+Example snippet of fstab.* for userdata mount point:
+/dev/block/platform/msm_sdcc.1/by-name/userdata    /data        ext4    rw,discard,nosuid,nodev,noatime,nodiratime,noauto_da_alloc,nobarrier    wait,check,encryptable=footer
+/dev/block/platform/msm_sdcc.1/by-name/userdata    /data        f2fs    rw,discard,nosuid,nodev,noatime,nodiratime,inline_xattr                 wait,encryptable=footer
+
+Changes in logic ignore 1st failure as an automatic assumption of encryption.
+Instead fstab is checked for another line describing mount point (2 retries)
+Once all retries fail, encryption is assumed.
+
+NOTE: Some logic was removed from the original sources: If userdata failed to mount
+and was not encrypted a format of the filesystem was forced as a way of recovering
+the device.  Most custom ROM users have access to recovery where they can decide
+what to do in this case.
+
+REFERENCE COMMITS:
+
+IKJBMR2-6556: don't assume that mount failure implies encryption
+https://github.com/MotorolaMobilityLLC/system-core/commit/f3c3b19f93967952e1811cad82d5a0ef5bbfcad3
+
+fs_mgr: support multiple file systems on a mount point
+https://github.com/MotorolaMobilityLLC/system-core/commit/84ea2cd252515384a254b52dfd84721b885707ab
+
+fs_mgr: rename "recover_userdata" relic to join fs_mgr
+https://github.com/MotorolaMobilityLLC/system-core/commit/a4ef7c2c321b71496a13066af94b4b1cb557dd28
+
+Change-Id: I682580d2a756bff4dba75760e0f117d95613e790
+---
+ fs_mgr/Android.mk       |   3 +-
+ fs_mgr/fs_mgr.c         |  84 +++++++++++++++++++++++---
+ fs_mgr/fs_mgr_format.c  | 156 ++++++++++++++++++++++++++++++++++++++++++++++++
+ fs_mgr/fs_mgr_priv.h    |   1 +
+ fs_mgr/include/fs_mgr.h |   5 ++
+ 5 files changed, 240 insertions(+), 9 deletions(-)
+ create mode 100644 fs_mgr/fs_mgr_format.c
+
+diff --git a/fs_mgr/Android.mk b/fs_mgr/Android.mk
+index 790598a..ee763e5 100644
+--- a/fs_mgr/Android.mk
++++ b/fs_mgr/Android.mk
+@@ -3,13 +3,14 @@
+ LOCAL_PATH:= $(call my-dir)
+ include $(CLEAR_VARS)
+ 
+-LOCAL_SRC_FILES:= fs_mgr.c fs_mgr_verity.c
++LOCAL_SRC_FILES:= fs_mgr.c fs_mgr_verity.c fs_mgr_format.c
+ 
+ LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
+ 
+ LOCAL_MODULE:= libfs_mgr
+ LOCAL_STATIC_LIBRARIES := liblogwrap libmincrypt libext4_utils_static
+ LOCAL_C_INCLUDES += system/extras/ext4_utils
++LOCAL_C_INCLUDES += system/vold
+ LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
+ 
+ include $(BUILD_STATIC_LIBRARY)
+diff --git a/fs_mgr/fs_mgr.c b/fs_mgr/fs_mgr.c
+index 006560b..5d82467 100644
+--- a/fs_mgr/fs_mgr.c
++++ b/fs_mgr/fs_mgr.c
+@@ -59,6 +59,8 @@
+ 
+ #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
+ 
++#define MAX_MOUNT_RETRIES 2
++
+ struct flag_list {
+     const char *name;
+     unsigned flag;
+@@ -239,6 +241,21 @@ static int parse_flags(char *flags, struct flag_list *fl,
+     return f;
+ }
+ 
++int update_fallbacks(struct fstab_rec *recs, int index)
++{
++    int i;
++
++    for (i = index - 1; i >= 0; i--) {
++        if (!strcmp(recs[i].mount_point, recs[index].mount_point) &&
++            recs[i].fallback == NULL) {
++            recs[i].fallback = &recs[index];
++            return 1;
++        }
++    }
++
++    return 0;
++}
++
+ struct fstab *fs_mgr_read_fstab(const char *fstab_path)
+ {
+     FILE *fstab_file;
+@@ -360,6 +377,7 @@ struct fstab *fs_mgr_read_fstab(const char *fstab_path)
+         fstab->recs[cnt].partnum = flag_vals.partnum;
+         fstab->recs[cnt].swap_prio = flag_vals.swap_prio;
+         fstab->recs[cnt].zram_size = flag_vals.zram_size;
++        update_fallbacks(fstab->recs, cnt);
+         cnt++;
+     }
+     fclose(fstab_file);
+@@ -519,7 +537,7 @@ static int fs_match(char *in1, char *in2)
+ 
+ int fs_mgr_mount_all(struct fstab *fstab)
+ {
+-    int i = 0;
++    int i = 0, retry = MAX_MOUNT_RETRIES;
+     int encrypted = 0;
+     int ret = -1;
+     int mret;
+@@ -531,7 +549,7 @@ int fs_mgr_mount_all(struct fstab *fstab)
+ 
+     for (i = 0; i < fstab->num_entries; i++) {
+         /* Don't mount entries that are managed by vold */
+-        if (fstab->recs[i].fs_mgr_flags & (MF_VOLDMANAGED | MF_RECOVERYONLY)) {
++        if (fstab->recs[i].fs_mgr_flags & (MF_VOLDMANAGED | MF_RECOVERYONLY | MF_DISABLED)) {
+             continue;
+         }
+ 
+@@ -546,6 +564,13 @@ int fs_mgr_mount_all(struct fstab *fstab)
+             wait_for_file(fstab->recs[i].blk_device, WAIT_TIMEOUT);
+         }
+ 
++        /* If we have a fallback, see if our FS is there instead of wasting time
++         * trying to mount it. */
++        if (fstab->recs[i].fallback && fs_mgr_identify_fs(&fstab->recs[i]) != 0) {
++            fstab->recs[i].fs_mgr_flags |= MF_DISABLED;
++            continue;
++        }
++
+         if (fstab->recs[i].fs_mgr_flags & MF_CHECK) {
+             check_fs(fstab->recs[i].blk_device, fstab->recs[i].fs_type,
+                      fstab->recs[i].mount_point);
+@@ -563,7 +588,12 @@ int fs_mgr_mount_all(struct fstab *fstab)
+                      fstab->recs[i].fs_options);
+ 
+         if (!mret) {
++            /* We have a fallback that we don't need, so disable it */
++            if (fstab->recs[i].fallback) {
++                fstab->recs[i].fallback->fs_mgr_flags |= MF_DISABLED;
++            }
+             /* Success!  Go get the next one */
++            retry = MAX_MOUNT_RETRIES;
+             continue;
+         }
+ 
+@@ -572,7 +602,7 @@ int fs_mgr_mount_all(struct fstab *fstab)
+ 
+         /* mount(2) returned an error, check if it's encrypted and deal with it */
+         if ((fstab->recs[i].fs_mgr_flags & MF_CRYPT) &&
+-            !partition_wiped(fstab->recs[i].blk_device)) {
++                fs_mgr_is_partition_encrypted(&fstab->recs[i])) {
+             /* Need to mount a tmpfs at this mountpoint for now, and set
+              * properties that vold will query later for decrypting
+              */
+@@ -587,7 +617,32 @@ int fs_mgr_mount_all(struct fstab *fstab)
+             ERROR("Failed to mount an un-encryptable or wiped partition on"
+                     "%s at %s options: %s error: %s\n",
+                     fstab->recs[i].blk_device, fstab->recs[i].mount_point,
+-                    fstab->recs[i].fs_options, strerror(mount_errno));            goto out;
++                    fstab->recs[i].fs_options, strerror(mount_errno));
++            if (partition_wiped(fstab->recs[i].blk_device)) {
++                ERROR("Blank partition on %s for %s\n",
++                        fstab->recs[i].blk_device, fstab->recs[i].mount_point);
++            } else if (retry > 0) {
++                /* Mount failed, but the device does not appear to be erased
++                 * and encryption is not enabled.  Try again.
++                 */
++                ERROR("Cannot mount filesystem on %s at %s; retrying...\n",
++                        fstab->recs[i].blk_device, fstab->recs[i].mount_point);
++                retry--;
++                i--;
++                continue;
++            } else if (fstab->recs[i].fallback) {
++                /* We have a fallback, so disable this scenario and try that one. */
++                fstab->recs[i].fs_mgr_flags |= MF_DISABLED;
++                ERROR("Cannot mount filesystem on %s at %s; trying fallback\n",
++                        fstab->recs[i].blk_device, fstab->recs[i].mount_point);
++                continue;
++            } else {
++                ERROR("Cannot mount filesystem on %s at %s\n",
++                        fstab->recs[i].blk_device, fstab->recs[i].mount_point);
++            }
++            retry = MAX_MOUNT_RETRIES;
++
++            goto out;
+         }
+     }
+ 
+@@ -620,7 +675,7 @@ int fs_mgr_do_mount(struct fstab *fstab, char *n_name, char *n_blk_device,
+             continue;
+         }
+ 
+-        /* We found our match */
++        /* We found our match (we ignore MF_DISABLED) */
+         /* If this swap or a raw partition, report an error */
+         if (!strcmp(fstab->recs[i].fs_type, "swap") ||
+             !strcmp(fstab->recs[i].fs_type, "emmc") ||
+@@ -655,10 +710,19 @@ int fs_mgr_do_mount(struct fstab *fstab, char *n_name, char *n_blk_device,
+         }
+         if (__mount(n_blk_device, m, fstab->recs[i].fs_type,
+                     fstab->recs[i].flags, fstab->recs[i].fs_options)) {
+-            ERROR("Cannot mount filesystem on %s at %s options: %s error: %s\n",
+-                n_blk_device, m, fstab->recs[i].fs_options, strerror(errno));
++            if (fstab->recs[i].fallback) {
++                /* We have a fallback, so disable this one and pray */
++                fstab->recs[i].fs_mgr_flags |= MF_DISABLED;
++                ERROR("Cannot mount filesystem on %s at %s as %s; trying fallback\n",
++                        n_blk_device, m, fstab->recs[i].fs_type);
++                continue;
++            }
++            ERROR("Cannot mount filesystem on %s at %s as %s options: %s error: %s\n",
++                    n_blk_device, m, fstab->recs[i].fs_type, fstab->recs[i].fs_options, strerror(errno));
+             goto out;
+         } else {
++            /* Pre-decryption pass might have set this */
++            fstab->recs[i].fs_mgr_flags &= ~MF_DISABLED;
+             ret = 0;
+             goto out;
+         }
+@@ -808,6 +872,9 @@ int fs_mgr_get_crypt_info(struct fstab *fstab, char *key_loc, char *real_blk_dev
+ 
+     /* Look for the encryptable partition to find the data */
+     for (i = 0; i < fstab->num_entries; i++) {
++        if (fstab->recs[i].fs_mgr_flags & MF_DISABLED) {
++            continue;
++        }
+         /* Don't deal with vold managed enryptable partitions here */
+         if (fstab->recs[i].fs_mgr_flags & MF_VOLDMANAGED) {
+             continue;
+@@ -869,7 +936,8 @@ struct fstab_rec *fs_mgr_get_entry_for_mount_point(struct fstab *fstab, const ch
+     for (i = 0; i < fstab->num_entries; i++) {
+         int len = strlen(fstab->recs[i].mount_point);
+         if (strncmp(path, fstab->recs[i].mount_point, len) == 0 &&
+-            (path[len] == '\0' || path[len] == '/')) {
++            (path[len] == '\0' || path[len] == '/') &&
++            !(fstab->recs[i].fs_mgr_flags & MF_DISABLED)) {
+             return &fstab->recs[i];
+         }
+     }
+diff --git a/fs_mgr/fs_mgr_format.c b/fs_mgr/fs_mgr_format.c
+new file mode 100644
+index 0000000..55856d2
+--- /dev/null
++++ b/fs_mgr/fs_mgr_format.c
+@@ -0,0 +1,156 @@
++/*
++ * Copyright (C) 2011 Motorola
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#include <stdio.h>
++#include <unistd.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <sys/wait.h>
++#include <errno.h>
++#include <cutils/partition_utils.h>
++#include <sys/mount.h>
++#include "ext4_utils.h"
++#include "ext4.h"
++#include "fs_mgr_priv.h"
++/* Avoid redefinition warnings */
++#undef __le32
++#undef __le16
++#include <cryptfs.h>
++
++/* These come from cryptfs.c */
++#define CRYPT_KEY_IN_FOOTER "footer"
++#define CRYPT_MAGIC         0xD0B5B1C4
++
++#define F2FS_SUPER_MAGIC 0xF2F52010
++#define EXT4_SUPER_MAGIC 0xEF53
++
++#define INVALID_BLOCK_SIZE -1
++
++int fs_mgr_is_partition_encrypted(struct fstab_rec *fstab)
++{
++    int fd = -1;
++    struct stat statbuf;
++    unsigned int sectors;
++    off64_t offset;
++    __le32 crypt_magic = 0;
++    int ret = 0;
++
++    if (!(fstab->fs_mgr_flags & MF_CRYPT))
++        return 0;
++
++    if (fstab->key_loc[0] == '/') {
++        if ((fd = open(fstab->key_loc, O_RDWR)) < 0) {
++            goto out;
++        }
++    } else if (!strcmp(fstab->key_loc, CRYPT_KEY_IN_FOOTER)) {
++        if ((fd = open(fstab->blk_device, O_RDWR)) < 0) {
++            goto out;
++        }
++        if ((ioctl(fd, BLKGETSIZE, &sectors)) == -1) {
++            goto out;
++        }
++        offset = ((off64_t)sectors * 512) - CRYPT_FOOTER_OFFSET;
++        if (lseek64(fd, offset, SEEK_SET) == -1) {
++            goto out;
++        }
++    } else {
++        goto out;
++    }
++
++    if (read(fd, &crypt_magic, sizeof(crypt_magic)) != sizeof(crypt_magic)) {
++        goto out;
++    }
++    if (crypt_magic != CRYPT_MAGIC) {
++        goto out;
++    }
++
++    /* It's probably encrypted! */
++    ret = 1;
++
++out:
++    if (fd >= 0) {
++        close(fd);
++    }
++    return ret;
++}
++
++#define TOTAL_SECTORS 4         /* search the first 4 sectors */
++static int is_f2fs(char *block)
++{
++    __le32 *sb;
++    int i;
++
++    for (i = 0; i < TOTAL_SECTORS; i++) {
++        sb = (__le32 *)(block + (i * 512));     /* magic is in the first word */
++        if (le32_to_cpu(sb[0]) == F2FS_SUPER_MAGIC) {
++            return 1;
++        }
++    }
++
++    return 0;
++}
++
++static int is_ext4(char *block)
++{
++    struct ext4_super_block *sb = (struct ext4_super_block *)block;
++    int i;
++
++    for (i = 0; i < TOTAL_SECTORS * 512; i += sizeof(struct ext4_super_block), sb++) {
++        if (le32_to_cpu(sb->s_magic) == EXT4_SUPER_MAGIC) {
++            return 1;
++        }
++    }
++
++    return 0;
++}
++
++/* Examine the superblock of a block device to see if the type matches what is
++ * in the fstab entry.
++ */
++int fs_mgr_identify_fs(struct fstab_rec *fstab)
++{
++    char *block = NULL;
++    int fd = -1;
++    char rc = -1;
++
++    block = calloc(1, TOTAL_SECTORS * 512);
++    if (!block) {
++        goto out;
++    }
++    if ((fd = open(fstab->blk_device, O_RDONLY)) < 0) {
++        goto out;
++    }
++    if (read(fd, block, TOTAL_SECTORS * 512) != TOTAL_SECTORS * 512) {
++        goto out;
++    }
++
++    if ((!strncmp(fstab->fs_type, "f2fs", 4) && is_f2fs(block)) ||
++        (!strncmp(fstab->fs_type, "ext4", 4) && is_ext4(block))) {
++        rc = 0;
++    } else {
++        ERROR("Did not recognize file system type %s on %s\n", fstab->fs_type, fstab->blk_device);
++    }
++
++out:
++    if (fd >= 0) {
++        close(fd);
++    }
++    if (block) {
++        free(block);
++    }
++    return rc;
++}
+diff --git a/fs_mgr/fs_mgr_priv.h b/fs_mgr/fs_mgr_priv.h
+index 59ffd78..c1f3b90 100644
+--- a/fs_mgr/fs_mgr_priv.h
++++ b/fs_mgr/fs_mgr_priv.h
+@@ -78,6 +78,7 @@
+  * a la the Nexus One.
+  */
+ #define MF_NOEMULATEDSD 0x400
++#define MF_DISABLED     0x8000
+ 
+ #define DM_BUF_SIZE 4096
+ 
+diff --git a/fs_mgr/include/fs_mgr.h b/fs_mgr/include/fs_mgr.h
+index a17c408..e9bf891 100644
+--- a/fs_mgr/include/fs_mgr.h
++++ b/fs_mgr/include/fs_mgr.h
+@@ -37,6 +37,7 @@ struct fstab_rec {
+     unsigned long flags;
+     char *fs_options;
+     int fs_mgr_flags;
++    struct fstab_rec *fallback;
+     char *key_loc;
+     char *verity_loc;
+     long long length;
+@@ -71,6 +72,10 @@ int fs_mgr_is_nonremovable(struct fstab_rec *fstab);
+ int fs_mgr_is_encryptable(struct fstab_rec *fstab);
+ int fs_mgr_is_noemulatedsd(struct fstab_rec *fstab);
+ int fs_mgr_swapon_all(struct fstab *fstab);
++
++int fs_mgr_is_partition_encrypted(struct fstab_rec *fstab);
++int fs_mgr_identify_fs(struct fstab_rec *fstab);
++
+ #ifdef __cplusplus
+ }
+ #endif
+ 
